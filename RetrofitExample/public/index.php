@@ -24,7 +24,7 @@ $app->post('/register', function (Request $request, Response $response) {
 
         $result = $db->registerUser($id);
 
-        if ($result == USER_CREATED) {
+        if ($result!=true && $result == USER_CREATED) {
             $responseData['error'] = false;
             $responseData['message'] = 'Registered successfully';
           //  $responseData['user'] = $db->getUserByEmail($email);
