@@ -288,7 +288,7 @@ class DbOperation
 
             if ($sonide == 2 && $lk <= 2100 )
             {
-                YurishAsosiy($lk, $minSatck, 2);
+                YurishAsosiy($lk, $minSatck, 2,$index);
             }
 
             //Turnir
@@ -298,7 +298,7 @@ class DbOperation
                 {
                     if ($sonide == 5)
                     {
-                        YurishAsosiy($lk, $minSatck, 5);
+                        YurishAsosiy($lk, $minSatck, 5,$index);
                     }
                 }
                 else
@@ -306,13 +306,17 @@ class DbOperation
 
                     if ($sonide == 9)
                     {
-                        YurishAsosiy($lk, $minSatck, 9);
+                        YurishAsosiy($lk, $minSatck, 9,$index);
                     }
                 }
             }
         }
+
         function combinatsiya()
         {
+            $g=array();
+            $n=array();
+
             for ($i = 0; $i < 18; $i++)
             {
                 $g[$i] = rand(11, 63);
@@ -355,7 +359,7 @@ class DbOperation
                             $g[$t1] = rand(11, 63);
                         }
                     }
-                    if (t1 == 3)
+                    if ($t1 == 3)
                     {
                         while ($g[3] == $g[0] ||
                             $g[3] == $g[1] || $g[3] == $g[2] ||
@@ -689,15 +693,19 @@ class DbOperation
                 //set
                 // g[1] = 32; g[0] = 37; n[0] =25; n[1] = 43; n[2] = 11; n[3] = 24; n[4] = 58;
                 // g[2] = 45; g[3] = 50;
+
+
             }
             catch (Exception $e)
             {
                 print($e->getMessage());
             }
+            $as=array($g,$n);
+            return $as;
         }
 
         function  cardio()
-        {
+        {$cards=array();
             for($i = 11; $i < 24; $i++)
             {
                 $cards[$i] = "cl".$i;
@@ -714,7 +722,9 @@ class DbOperation
             {
                 $cards[$i] = "sp".($i - 39);
             }
+            return $cards;
         }
+
         function TurnLk($lk)
         {
             $m = 0;
@@ -890,12 +900,13 @@ class DbOperation
                     SetTikilganPullar("Tikilganpullar7","7",$lk);
                     SetTikilganPullar("Tikilganpullar8","8",$lk);
 
+//klk;l
 
+                     $n=combinatsiya();
 
-                     combinatsiya();cardio();
+                    $cards=cardio();
                     //Gruppalaga ajratiganda
-                    SetXAmmakartalar($cards[$n[0]].$cards[$n[1]].$cards[$n[2]].$cards[$n[3]].$cards[$n[4]],$lk);
-                    //XammaKartalar[lk] = ;
+                    SetXAmmakartalar($cards[$n[0][0]].$cards[$n[0][1]].$cards[$n[0][2]].$cards[$n[0][3]].$cards[$n[0][4]],$lk);
                     // if (trt != -1) { ChiqaribYuborish[trt].Timer.Start(); }
 
                     try
@@ -918,7 +929,6 @@ class DbOperation
                     $totti = Tekshir($lk);
 
                     SetHuy($totti,$lk);
-
                     for ($m = 0; $m < $totti; $m++)
                     {
                         $tott2 = -1;
@@ -944,11 +954,12 @@ class DbOperation
                         {
                             try
                             {
-                                SEndMEssage($lk,$index,$)
+                                $message=$cards[$n[1][$m * 2]].$cards[$n[1][$m * 2 + 1]].substr(GetYurishKimmiki($lk),0,1).
+                            str_pad((string)($minSatck / 2),12,'0')."!". str_pad((string)($minSatck ),12,'0').
+                                    $asd .$index .$lk;
 
-                            writer.WriteLine(cards[g[m * 2]] + cards[g[m * 2 + 1]] + "" + YurishKimmiki[lk].Substring(0, 1) +
-                            (minSatck / 2).ToString().PadLeft(12, '0') + "!" + (minSatck).ToString().PadLeft(12, '0') +
-                            uyinchilar[lk] + grop22[lk][tott2].indexClient + grop22[lk][tott2].ClientGroup);
+                                SEndMEssage($lk,$index,$message);
+
                         }
                             catch ( ErrorException $e)
                             {
@@ -1009,41 +1020,41 @@ class DbOperation
             $gruppdagaiOdamlariSoni=0;
             for ($i = 0; $i < Tekshir($GroupNumber); $i++)
             {
-                switch(substr(uyinchilar($GroupNumber),$i, 1)){
-                    case 0 :  if ((int)substr(OxirgiZapisplar($GroupNumber,"OxirgiZapis0"),14, 12) >= $minStavka)
+                switch(substr(Getuyinchilar($GroupNumber),$i, 1)){
+                    case 0 :  if ((int)substr(GetOxirgiZapisplar($GroupNumber,"OxirgiZapis0"),14, 12) >= $minStavka)
                     {
                         $gruppdagaiOdamlariSoni = $gruppdagaiOdamlariSoni + 1;
                     }
                         break;
-                    case 1 :  if ((int)substr(OxirgiZapisplar($GroupNumber,"OxirgiZapis1"),14, 12) >= $minStavka)
+                    case 1 :  if ((int)substr(GetOxirgiZapisplar($GroupNumber,"OxirgiZapis1"),14, 12) >= $minStavka)
                     {
                         $gruppdagaiOdamlariSoni = $gruppdagaiOdamlariSoni + 1;
                     } break;
-                    case 2 :  if ((int)substr(OxirgiZapisplar($GroupNumber,"OxirgiZapis2"),14, 12) >= $minStavka)
+                    case 2 :  if ((int)substr(GetOxirgiZapisplar($GroupNumber,"OxirgiZapis2"),14, 12) >= $minStavka)
                     {
                         $gruppdagaiOdamlariSoni = $gruppdagaiOdamlariSoni + 1;
                     } break;
-                    case 3 :  if ((int)substr(OxirgiZapisplar($GroupNumber,"OxirgiZapis3"),14, 12) >= $minStavka)
+                    case 3 :  if ((int)substr(GetOxirgiZapisplar($GroupNumber,"OxirgiZapis3"),14, 12) >= $minStavka)
                     {
                         $gruppdagaiOdamlariSoni = $gruppdagaiOdamlariSoni + 1;
                     } break;
-                    case 4 :   if ((int)substr(OxirgiZapisplar($GroupNumber,"OxirgiZapis4"),14, 12) >= $minStavka)
+                    case 4 :   if ((int)substr(GetOxirgiZapisplar($GroupNumber,"OxirgiZapis4"),14, 12) >= $minStavka)
                     {
                         $gruppdagaiOdamlariSoni = $gruppdagaiOdamlariSoni + 1;
                     }break;
-                    case 5 :  if ((int)substr(OxirgiZapisplar($GroupNumber,"OxirgiZapis5"),14, 12) >= $minStavka)
+                    case 5 :  if ((int)substr(GetOxirgiZapisplar($GroupNumber,"OxirgiZapis5"),14, 12) >= $minStavka)
                     {
                         $gruppdagaiOdamlariSoni = $gruppdagaiOdamlariSoni + 1;
                     } break;
-                    case 6 :  if ((int)substr(OxirgiZapisplar($GroupNumber,"OxirgiZapis6"),14, 12) >= $minStavka)
+                    case 6 :  if ((int)substr(GetOxirgiZapisplar($GroupNumber,"OxirgiZapis6"),14, 12) >= $minStavka)
                     {
                         $gruppdagaiOdamlariSoni = $gruppdagaiOdamlariSoni + 1;
                     } break;
-                    case 7 :  if ((int)substr(OxirgiZapisplar($GroupNumber,"OxirgiZapis7"),14, 12) >= $minStavka)
+                    case 7 :  if ((int)substr(GetOxirgiZapisplar($GroupNumber,"OxirgiZapis7"),14, 12) >= $minStavka)
                     {
                         $gruppdagaiOdamlariSoni = $gruppdagaiOdamlariSoni + 1;
                     } break;
-                    case 8 :  if ((int)substr(OxirgiZapisplar($GroupNumber,"OxirgiZapis8"),14, 12) >= $minStavka)
+                    case 8 :  if ((int)substr(GetOxirgiZapisplar($GroupNumber,"OxirgiZapis8"),14, 12) >= $minStavka)
                     {
                         $gruppdagaiOdamlariSoni = $gruppdagaiOdamlariSoni + 1;
                     } break;
@@ -1057,32 +1068,32 @@ class DbOperation
             $index =substr(Getuyinchilar($GroupNumber),strlen(Getuyinchilar($GroupNumber)), 1)
             switch($index){
                 case 0;  $stmt =$this->con->prepare("UPDATE Players SET OxirgiZapislar0 = ? WHERE CustomerID =$Id")
-                    $fd=$data.substr(uyinchilar($GroupNumber),strlen(uyinchilar($GroupNumber)), 1);
+                    $fd=$data.substr(Getuyinchilar($GroupNumber),strlen(Getuyinchilar($GroupNumber)), 1);
                     $stmt->bind_param("s",$fd);
                     $stmt->execute();  break;
                 case 1;  $stmt =$this->con->prepare("UPDATE Players SET OxirgiZapislar1 = ? WHERE CustomerID =$Id");
-                    $fd=$data.substr(uyinchilar($GroupNumber),strlen(uyinchilar($GroupNumber)), 1);
+                    $fd=$data.substr(Getuyinchilar($GroupNumber),strlen(Getuyinchilar($GroupNumber)), 1);
                     $stmt->bind_param("s",$fd);                    $stmt->execute();  break;
                 case 2;  $stmt =$this->con->prepare("UPDATE Players SET OxirgiZapislar2 = ? WHERE CustomerID =$Id");
-                    $fd=$data.substr(uyinchilar($GroupNumber),strlen(uyinchilar($GroupNumber)), 1);
+                    $fd=$data.substr(Getuyinchilar($GroupNumber),strlen(Getuyinchilar($GroupNumber)), 1);
                     $stmt->bind_param("s",$fd);                    $stmt->execute();  break;
                 case 3;  $stmt =$this->con->prepare("UPDATE Players SET OxirgiZapislar3 = ? WHERE CustomerID =$Id");
-                    $fd=$data.substr(uyinchilar($GroupNumber),strlen(uyinchilar($GroupNumber)), 1);
+                    $fd=$data.substr(Getuyinchilar($GroupNumber),strlen(Getuyinchilar($GroupNumber)), 1);
                     $stmt->bind_param("s",$fd);                    $stmt->execute();  break;
                 case 4;  $stmt =$this->con->prepare("UPDATE Players SET OxirgiZapislar4 = ? WHERE CustomerID =$Id");
-                    $fd=$data.substr(uyinchilar($GroupNumber),strlen(uyinchilar($GroupNumber)), 1);
+                    $fd=$data.substr(Getuyinchilar($GroupNumber),strlen(Getuyinchilar($GroupNumber)), 1);
                     $stmt->bind_param("s",$fd);                    $stmt->execute();  break;
                 case 5;  $stmt =$this->con->prepare("UPDATE Players SET OxirgiZapislar5 = ? WHERE CustomerID =$Id");
-                    $fd=$data.substr(uyinchilar($GroupNumber),strlen(uyinchilar($GroupNumber)), 1);
+                    $fd=$data.substr(Getuyinchilar($GroupNumber),strlen(Getuyinchilar($GroupNumber)), 1);
                     $stmt->bind_param("s",$fd);                    $stmt->execute();  break;
                 case 6;  $stmt =$this->con->prepare("UPDATE Players SET OxirgiZapislar6 = ? WHERE CustomerID =$Id");
-                    $fd=$data.substr(uyinchilar($GroupNumber),strlen(uyinchilar($GroupNumber)), 1);
+                    $fd=$data.substr(Getuyinchilar($GroupNumber),strlen(Getuyinchilar($GroupNumber)), 1);
                     $stmt->bind_param("s",$fd);                    $stmt->execute();  break;
                 case 7;  $stmt =$this->con->prepare("UPDATE Players SET OxirgiZapislar7 = ? WHERE CustomerID =$Id");
-                    $fd=$data.substr(uyinchilar($GroupNumber),strlen(uyinchilar($GroupNumber)), 1);
+                    $fd=$data.substr(Getuyinchilar($GroupNumber),strlen(Getuyinchilar($GroupNumber)), 1);
                     $stmt->bind_param("s",$fd);                    $stmt->execute();  break;
                 case 8;  $stmt =$this->con->prepare("UPDATE Players SET OxirgiZapislar8 = ? WHERE CustomerID =$Id");
-                    $fd=$data.substr(uyinchilar($GroupNumber),strlen(uyinchilar($GroupNumber)), 1);
+                    $fd=$data.substr(Getuyinchilar($GroupNumber),strlen(Getuyinchilar($GroupNumber)), 1);
                     $stmt->bind_param("s",$fd);                    $stmt->execute();  break;
             }
 
