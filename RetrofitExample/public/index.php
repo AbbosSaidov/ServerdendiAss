@@ -40,21 +40,16 @@ $app->post('/register', function (Request $request, Response $response) {
     }
 });
 
-$app->post('/uyingaKirish', function (Request $request, Response $response) {
-    if (isTheseParametersAvailable(array('id','group','level','name','money','yol','pul'))){
+$app->post('/uyingaKirish', function (Request $request, Response $response){
+    if (isTheseParametersAvailable(array('data'))){
         $requestData = $request->getParsedBody();
-        $id = $requestData['id'];
-        $group = $requestData['group'];
-        $level = $requestData['level'];
-        $name = $requestData['name'];
-        $money = $requestData['money'];
-        $yol = $requestData['yol'];
-        $pul = $requestData['pul'];
+        $data = $requestData['data'];
+
 
         $db = new DbOperation();
         $responseData = array();
 
-        $result =$db->uyingaKirish($group);//gruppani chiqarish uchun
+        $result =$db->uyingaKirish($data);//gruppani chiqarish uchun
 
         if ($result == USER_CREATED) {
             $responseData['error'] = $result;
