@@ -283,9 +283,6 @@ class DbOperation
             //ChiqqanBusaChiqaribYuborish(lk);
 
 
-            // return $data.$index.$ass2;
-
-
             if ($sonide == 2 && $lk <= 2100 )
             {
                 YurishAsosiy($lk, $minSatck, 2,$index);
@@ -310,6 +307,7 @@ class DbOperation
                     }
                 }
             }
+            return $data.$index.$ass2;
         }
 
         function combinatsiya()
@@ -1065,9 +1063,9 @@ class DbOperation
             $data = "%%".$Name .str_pad((string)$GroupNumber,4,"0").$pul."$" .$yol
                 .$Level .$Money."xb".$Id;
             //%%NameByMe\Ism\0001\gruppa\00000001000$\pul\000000000000\yul\00000\level\000000001000\pul\xb0000000000\id\
-            $index =substr(Getuyinchilar($GroupNumber),strlen(Getuyinchilar($GroupNumber)), 1)
+            $index =substr(Getuyinchilar($GroupNumber),strlen(Getuyinchilar($GroupNumber)), 1);
             switch($index){
-                case 0;  $stmt =$this->con->prepare("UPDATE Players SET OxirgiZapislar0 = ? WHERE CustomerID =$Id")
+                case 0;  $stmt =$this->con->prepare("UPDATE Players SET OxirgiZapislar0 = ? WHERE CustomerID =$Id");
                     $fd=$data.substr(Getuyinchilar($GroupNumber),strlen(Getuyinchilar($GroupNumber)), 1);
                     $stmt->bind_param("s",$fd);
                     $stmt->execute();  break;
