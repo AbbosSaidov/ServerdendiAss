@@ -188,6 +188,7 @@ class DbOperation
         }
         return true;
     }
+    //methoda uyinga kirish unchun
     function UyingaKirish($data){
         function uyinchilarade($son)
         {
@@ -823,13 +824,11 @@ class DbOperation
             } if( (int)substr($db->GetOxirgiZapisplar($lk,"OxirgiZapis9"),14,12)+(int)substr($db->GetOxirgiZapisplar($lk,"OxirgiZapis9"),27,12)>=$minSatck){
                 $dssad = $dssad + 1;if(strpos($db->Getuyinchilar($lk), (string)(8+ 1)) !== false){ $ttt4 = $ttt4.(string)(8+ 1);}
             }
-
                 $ttt5 = "";
-
                 $asd=$db->Getuyinchilar($lk);
-
                 for($i=0;$i<9;$i++){
-                    if(strpos($asd,(string)($i+1))!==false&&strpos($ttt4,(string)($i+1))!==false){
+                    if(strpos($asd,(string)($i+1))!==false&&
+                        strpos($ttt4,(string)($i+1))!==false){
                         $ttt5=$ttt5.(string)($i+1);
                     }
                 }
@@ -846,7 +845,9 @@ class DbOperation
                     {
                         $gd = $gd - 9;
                     }
-                    if (strpos($koo2, $gd) !== false)
+                    //   $db->SetYurishKimmiki("114"."-".$gd." - ".$koo2,$lk);
+                    //   break;
+                    if (strpos($koo2, (string)$gd) !== false)
                     {
                         $rew=(string)$gd.(string)$koo2;
                         $db->SetYurishKimmiki($rew,$lk);
@@ -1201,5 +1202,210 @@ class DbOperation
             }
         }
         return $rewrwr;
+    }
+    //messajji olish ucnde
+    function getMessages($userindex,$userGrop)
+    {$data="";
+
+        $stmt = $this->con->prepare("SELECT message FROM messages WHERE gropnumber = ? AND indexq=?");
+        $stmt->bind_param("ii", $userGrop,$userindex);
+        $stmt->execute();
+        $stmt->bind_result($data);
+        $messages = array();
+        while ($stmt->fetch()) {
+            $temp = array();
+            $temp['data'] = $data;
+            array_push($messages, $temp);
+        }
+        return $messages;
+    }
+    //
+    function UyinniDAvomEttir($data){
+        if (strpos($data,"$")!==false && strpos($data,"^")!==false && strlen($data) > 32)
+        {
+            //%%NameByMe0001000000039990$000000000010000000040000xb00000000011
+            //1000000000980000000000020$^121010
+            //3000000000980000000000020$^1021010
+            $Pas=false;
+            $nmaligi = "UyinniDavomEtishi";
+            $Index = (int)substr($data,0,1);
+            $GroupNumber =(int)substr($data,28,4);
+            $keraklide = (int)substr($data,27,1);
+            $yol =(int)substr($data,13,12);
+            $pul = (int)substr($data,1,12);
+            $mik = (int)substr($data,32,1);
+            $db=new DbOperation();
+            $nj="OxirgiZapis".(string)$Index;
+            $oxirgizapis = $db->GetOxirgiZapisplar($GroupNumber,$nj);
+            $yurishkimmiki=$db->GetYurishKimmiki($GroupNumber);
+            $kartaTarqatildi=$db->GetKartatarqatildi($GroupNumber);
+
+            if($GroupNumber>0 && $GroupNumber < 3200 && strlen($oxirgizapis) > 68)
+            {
+                $Level = substr($oxirgizapis,39,6);
+                $Id = substr($oxirgizapis,59,10);
+                $Name = substr($oxirgizapis,2,8);
+                $Money = substr($oxirgizapis,45,126);
+            }
+            if (strpos($data,"&")!==false )
+            {
+                $Pas = true;
+                if (strlen($data)> 34)
+                {
+                    $Judgement =substr($data,strlen($data)-12,12);
+                }
+                else
+                {
+                    $Judgement = "";
+                }
+            }
+            else
+            {
+                $Pas = false;
+            }
+            if ($nmaligi =="UyinniDavomEtishi"&& strlen($yurishkimmiki)>1&&
+                (string)$Index == substr($yurishkimmiki,0,1) &&
+                $kartaTarqatildi=="true")
+        {
+
+            //qw = data;
+            //Masalan :  1st220000001000$000000000010^
+            //Pullarde[1]=1000;Yullarde[1]=10;
+            //1000000000990000000000010$^200017&(
+            $lk = $GroupNumber;
+/*
+            for( $i=0; $i<ChiqaribYuborish.Count; $i++)
+            {
+                if (ChiqaribYuborish[i].lk1 == lk)
+                {
+                    ChiqaribYuborish[i].Timer.Stop();
+                    ChiqaribYuborish[i].Timer.Reset();
+                    ChiqaribYuborish[i].Timer.Start();
+                    break;
+                }
+            }*/
+
+           $tikilgsnpul="TikilgsnPullar".(string)$Index;
+            $db->SetTikilganPullar($tikilgsnpul,$yol,$lk);
+                    grop22[lk][i].TikilganPullar2 = MainData.yol;
+
+
+
+            for($i = 0; $i < YurishKimmiki[lk].Length; $i++){
+            //1000000000350000000000050$^201020 a=1 b=13113
+            string a = YurishKimmiki[lk].Substring(0, 1); string b = YurishKimmiki[lk];
+            // print(a + " " + b);
+                if (i + 2 == YurishKimmiki[lk].Length)
+                {
+                    YurishKimmiki[lk] =b.Substring(1, 1) +
+                    b.Substring(1, b.Length - 1);
+                    break;
+                }
+                else
+                {
+                    if (a == b.Substring(i + 1, 1))
+                    {
+                        YurishKimmiki[lk] =
+                        b.Substring(i + 2, 1) +
+                        b.Substring(1, b.Length - 1);
+                        break;
+                    }
+                }
+            }
+
+
+
+            OxirgiZapisplar[lk,MainData.Index] =
+            "%%" + MainData.Name + MainData.GroupNumber.ToString().PadLeft(4, '0') + MainData.pul + "$" + MainData.yol
+            + MainData.Level + MainData.Money + "xb" + MainData.Id +MainData.Index;
+            if(MainData.keraklide == 1)
+            {
+                huy[lk] = YurishKimmiki[lk].Length - 1;
+            }
+            if (MainData.keraklide >= int.Parse(huy[lk].ToString()))
+            {
+                try
+                {
+                    for (int i = 0; i < grop22[lk].Count; i++)
+                    {
+                        if (YurishKimmiki[lk].Contains(grop22[lk][i].indexClient.ToString()))
+                        {
+                            grop22[lk][i].TikilganPullar =
+                            (long.Parse(grop22[lk][i].TikilganPullar) +
+                            long.Parse(grop22[lk][i].TikilganPullar2)).ToString();
+                            grop22[lk][i].TikilganPullar2 = "0";
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                }
+                huy[lk] = YurishKimmiki[lk].Length - 1;
+
+                hu3[lk]++; if (hu3[lk] == 4)
+                {
+                    for (int i = 1; i < 10; i++)
+                    {
+                        Javoblade[lk,i] = "";
+                    }
+                    Javobit(lk); hu3[lk] = 0;
+                }
+                // XammaKartalar[lk] = cards[n[0]] + cards[n[1]] + cards[n[2]] + cards[n[3]] + cards[n[4]];
+                //1000000000990000000000010$^200017&
+                if (!MainData.Pas) {
+                    data = MainData.Index + MainData.pul + MainData.yol + "$^" + MainData.keraklide + MainData.mik  + XammaKartalar[lk]; }
+                else
+                {
+                    data = MainData.Index + MainData.pul + MainData.yol + "$^" + MainData.keraklide + "&" + MainData.mik  + XammaKartalar[lk];
+                }
+
+                if (YurishKimmiki[lk] == "") { YurishKimmiki[lk] = "0"; }
+                Broadcast(data + huy[lk] + YurishKimmiki[lk].Substring(0, 1) + lk.ToString().PadLeft(4, '0'), grop2[lk],lk);
+
+                if (MainData.Pas)
+                {
+                    if (huy[lk] == 2 || YurishKimmiki[lk].Length == 3) { hu3[lk] = 0; StartCoroutine(Pas(lk)); }
+                    YurishKimmiki[lk] = YurishKimmiki[lk].Replace(MainData.Index.ToString(), "");
+                }
+            }
+            else
+            {
+                if (MainData.Pas)
+                {
+                    if (YurishKimmiki[lk].Length < 4)
+                    {
+                        huy[lk] = YurishKimmiki[lk].Length-1;
+                    }
+                        if (MainData.Judgement!="")
+                        {
+                            for (int i = 0; i < BotGrouplar[lk].Count; i++)
+                        {
+                            print(BotGrouplar[lk]);
+                            OnIncomBot("TakeiT" + YurishKimmiki[lk].Substring(0, 1) +
+                            lk.ToString().PadLeft(4, '0') + MainData.Judgement, int.Parse(BotGrouplar[lk][i].IdNumber));
+                        }
+                    }
+                    YurishKimmiki[lk]=YurishKimmiki[lk].Replace(MainData.Index.ToString(), "");
+                    if (YurishKimmiki[lk] == "") { YurishKimmiki[lk] = "0"; }
+                    data = MainData.Index + MainData.pul + MainData.yol + "$^" + MainData.keraklide + MainData.mik  + huy[lk]+ "&";
+
+                    Broadcast(data + YurishKimmiki[lk].Substring(0, 1) + lk.ToString().PadLeft(4, '0'), grop2[lk], lk);
+                    // qushish mumkin
+                    if (huy[lk] == 2) { hu3[lk] = 0; StartCoroutine(Pas(lk));  }
+                }
+                else
+                {
+                    data = MainData.Index + MainData.pul + MainData.yol + "$^" + MainData.keraklide + MainData.mik + huy[lk];
+                    if (YurishKimmiki[lk] == "")
+                    {
+                        YurishKimmiki[lk] = "0";
+                    }
+                    Broadcast(data + huy[lk] + YurishKimmiki[lk].Substring(0, 1) + lk.ToString().PadLeft(4, '0'), grop2[lk], lk);
+                }
+            }
+        }
+
+        }
+        return "Zo'r";
     }
 }
