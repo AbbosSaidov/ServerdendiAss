@@ -38,6 +38,27 @@ class DbOperation
         $stmt->bind_param("si",$value,$GroupNumber);
         $stmt->execute();
     }
+    function GetTikilganPullar($GroupNumber ,$TikilganPullar){
+        $stmt2=$this->con->prepare("SELECT $TikilganPullar FROM tikilganpullar WHERE GroupNumber=?");
+        $stmt2->bind_param("s",$GroupNumber);
+        $stmt2->execute();
+        $stmt2->bind_result($GroupNumber);
+        $stmt2->fetch();
+        return $GroupNumber;
+    }
+    function SetJavoblade($nmaligi,$value,$GroupNumber){
+        $stmt =$this->con->prepare("UPDATE javoblade SET $nmaligi = ? WHERE GroupNumber = ?");
+        $stmt->bind_param("si",$value,$GroupNumber);
+        $stmt->execute();
+    }
+    function GetJavoblade($GroupNumber ,$Javoblade){
+        $stmt2=$this->con->prepare("SELECT $Javoblade FROM javoblade WHERE GroupNumber=?");
+        $stmt2->bind_param("s",$GroupNumber);
+        $stmt2->execute();
+        $stmt2->bind_result($GroupNumber);
+        $stmt2->fetch();
+        return $GroupNumber;
+    }
     function SetHowManyPlayers($value,$GroupNumber){
         $stmt =$this->con->prepare("UPDATE groups SET HowManyPlayers = ? WHERE NumberOfGroup = ?");
         $stmt->bind_param("si",$value,$GroupNumber);
@@ -62,6 +83,27 @@ class DbOperation
         $stmt->bind_param("ii",$value,$GroupNumber);
         $stmt->execute();
     }
+    function GetHuy($GroupNUmber){
+        $stmt2=$this->con->prepare("SELECT huy FROM groups WHERE NumberOfGroup=?");
+        $stmt2->bind_param("i",$GroupNUmber);
+        $stmt2->execute();
+        $stmt2->bind_result($GroupNUmber);
+        $stmt2->fetch();
+        return $GroupNUmber;
+    }
+    function Sethu3($value,$GroupNumber){
+        $stmt =$this->con->prepare("UPDATE groups SET hu3 = ? WHERE NumberOfGroup = ?");
+        $stmt->bind_param("ii",$value,$GroupNumber);
+        $stmt->execute();
+    }
+    function Gethu3($GroupNUmber){
+        $stmt2=$this->con->prepare("SELECT hu3 FROM groups WHERE NumberOfGroup=?");
+        $stmt2->bind_param("i",$GroupNUmber);
+        $stmt2->execute();
+        $stmt2->bind_result($GroupNUmber);
+        $stmt2->fetch();
+        return $GroupNUmber;
+    }
     function SetYurishKimmiki($value,$GroupNumber){
         $stmt =$this->con->prepare("UPDATE groups SET YurishKimmiki = ? WHERE NumberOfGroup = ?");
         $stmt->bind_param("si",$value,$GroupNumber);
@@ -81,6 +123,14 @@ class DbOperation
         $stmt =$this->con->prepare("UPDATE groups SET hammakartalar = ? WHERE NumberOfGroup = ?");
         $stmt->bind_param("si",$value,$GroupNumber);
         $stmt->execute();
+    }
+    function GetXAmmakartalar($ki1){
+        $stmt2=$this->con->prepare("SELECT hammakartalar FROM groups WHERE NumberOfGroup=?");
+        $stmt2->bind_param("s",$ki1);
+        $stmt2->execute();
+        $stmt2->bind_result($ki1);
+        $stmt2->fetch();
+        return $ki1;
     }
     function GetKartatarqatildi($ki1){
         $stmt2=$this->con->prepare("SELECT Kartatarqatildi FROM groups WHERE NumberOfGroup=?");
@@ -103,6 +153,18 @@ class DbOperation
         $stmt2->bind_param("iss",$groupnumber,$index,$message);
         $stmt2->execute();
     }
+    function SEndMEssageToGroup($groupnumber,$indexs,$message){
+
+        for($i=0;$i<strlen($indexs);$i++){
+            $index=(int)substr($indexs,$i,1);
+
+            $stmt2=$this->con->prepare("INSERT INTO messages (gropnumber,indexq,message) VALUES (?,?,?)");
+            $stmt2->bind_param("iss",$groupnumber,$index,$message);
+            $stmt2->execute();
+        }
+
+    }
+
     function Getgrop2help($grouppy){
         $stmt2=$this->con->prepare("SELECT grop2help FROM groups WHERE NumberOfGroup=?");
         $stmt2->bind_param("s",$grouppy);
@@ -137,6 +199,7 @@ class DbOperation
         $stmt2->fetch();
         return $GroupNumber;
     }
+
     function SetOxirgiZapislar($data,$GroupNumber,$OxirgiZapis,$index){
         $stmt =$this->con->prepare("UPDATE oxirgizapis SET $OxirgiZapis = ? WHERE GroupNumber =?");
         $fd=$data.$index;
@@ -1239,13 +1302,17 @@ class DbOperation
             $oxirgizapis = $db->GetOxirgiZapisplar($GroupNumber,$nj);
             $yurishkimmiki=$db->GetYurishKimmiki($GroupNumber);
             $kartaTarqatildi=$db->GetKartatarqatildi($GroupNumber);
-
+            $uyinchilar=$db->Getuyinchilar($GroupNumber);
+            $huy=$db->GetHuy($GroupNumber);
+            $Level ="000001";
+            $Id="0000000001";
+            $Name ="NameByMe";$Money ="";
             if($GroupNumber>0 && $GroupNumber < 3200 && strlen($oxirgizapis) > 68)
             {
                 $Level = substr($oxirgizapis,39,6);
                 $Id = substr($oxirgizapis,59,10);
                 $Name = substr($oxirgizapis,2,8);
-                $Money = substr($oxirgizapis,45,126);
+                $Money = substr($oxirgizapis,45,12);
             }
             if (strpos($data,"&")!==false )
             {
@@ -1284,123 +1351,115 @@ class DbOperation
                     break;
                 }
             }*/
-
+/*
            $tikilgsnpul="TikilgsnPullar".(string)$Index;
             $db->SetTikilganPullar($tikilgsnpul,$yol,$lk);
                     grop22[lk][i].TikilganPullar2 = MainData.yol;
 
+*/
 
-
-            for($i = 0; $i < YurishKimmiki[lk].Length; $i++){
+            for($i = 0; $i < strlen($yurishkimmiki); $i++){
             //1000000000350000000000050$^201020 a=1 b=13113
-            string a = YurishKimmiki[lk].Substring(0, 1); string b = YurishKimmiki[lk];
-            // print(a + " " + b);
-                if (i + 2 == YurishKimmiki[lk].Length)
+            $a =substr($yurishkimmiki,0,1);  $b = $yurishkimmiki;
+                if ($i + 2 == strlen($yurishkimmiki))
                 {
-                    YurishKimmiki[lk] =b.Substring(1, 1) +
-                    b.Substring(1, b.Length - 1);
+                    $db->SetYurishKimmiki(substr($b,1,1) +substr($b,1,strlen($b)-1),$GroupNumber);$yurishkimmiki=substr($b,1,1) +substr($b,1,strlen($b)-1);
                     break;
                 }
                 else
                 {
-                    if (a == b.Substring(i + 1, 1))
+                    if ($a ==substr($b,$i+1,1))
                     {
-                        YurishKimmiki[lk] =
-                        b.Substring(i + 2, 1) +
-                        b.Substring(1, b.Length - 1);
+                        $db->SetYurishKimmiki(substr($b,$i+2,1) +substr($b,1,strlen($b)-1),$GroupNumber);$yurishkimmiki=substr($b,$i+2,1) +substr($b,1,strlen($b)-1);
                         break;
                     }
                 }
             }
 
 
+$db->SetOxirgiZapislar("%%".$Name.str_pad((string)$GroupNumber,4,"0").$pul."$".$yol
+    .$Level .$Money."xb".$Id,$GroupNumber,"OxirgiZapis".(string)$Index,$Index);
+            $oxirgizapis=  "%%".$Name.str_pad((string)$GroupNumber,4,"0").$pul."$".$yol
+                .$Level .$Money."xb".$Id.$Index;
 
-            OxirgiZapisplar[lk,MainData.Index] =
-            "%%" + MainData.Name + MainData.GroupNumber.ToString().PadLeft(4, '0') + MainData.pul + "$" + MainData.yol
-            + MainData.Level + MainData.Money + "xb" + MainData.Id +MainData.Index;
-            if(MainData.keraklide == 1)
+            if($keraklide == 1)
             {
-                huy[lk] = YurishKimmiki[lk].Length - 1;
+                $db->SetHuy(strlen($yurishkimmiki)-1,$lk);
             }
-            if (MainData.keraklide >= int.Parse(huy[lk].ToString()))
+            if ($keraklide >= $huy)
             {
-                try
-                {
-                    for (int i = 0; i < grop22[lk].Count; i++)
+                    for ($i = 0; $i < strlen($yurishkimmiki)-1; $i++)
                     {
-                        if (YurishKimmiki[lk].Contains(grop22[lk][i].indexClient.ToString()))
-                        {
-                            grop22[lk][i].TikilganPullar =
-                            (long.Parse(grop22[lk][i].TikilganPullar) +
-                            long.Parse(grop22[lk][i].TikilganPullar2)).ToString();
-                            grop22[lk][i].TikilganPullar2 = "0";
-                        }
+                        $tikilgsnpul="TikilganPullar".(string)$Index;
+                        $OxirgiZapis="OxirgiZapis".(string)$Index;
+                        $db->SetTikilganPullar($tikilgsnpul,(int)$db->GetTikilganPullar($lk,$tikilgsnpul)+(int)substr($db->GetOxirgiZapisplar($lk,$OxirgiZapis),6,12),$lk);
                     }
-                }
-                catch (Exception e)
-                {
-                }
-                huy[lk] = YurishKimmiki[lk].Length - 1;
+                $db->SetHuy(strlen($yurishkimmiki)-1,$lk);
+                $hu3=$db->Gethu3($lk)+1;
+                $db->Sethu3($hu3,$lk);
 
-                hu3[lk]++; if (hu3[lk] == 4)
+             if ($hu3 == 4)
                 {
-                    for (int i = 1; i < 10; i++)
+                    for ($i = 1; $i < 10; $i++)
                     {
-                        Javoblade[lk,i] = "";
+                        $javboblede="Javoblade".(string)$i;
+                        $db->SetJavoblade($javboblede,"",$lk);
                     }
-                    Javobit(lk); hu3[lk] = 0;
+                    Javobit(lk);
+                    $db->Sethu3(0,$lk);
                 }
                 // XammaKartalar[lk] = cards[n[0]] + cards[n[1]] + cards[n[2]] + cards[n[3]] + cards[n[4]];
                 //1000000000990000000000010$^200017&
-                if (!MainData.Pas) {
-                    data = MainData.Index + MainData.pul + MainData.yol + "$^" + MainData.keraklide + MainData.mik  + XammaKartalar[lk]; }
+                if (!$Pas) {
+                    $data = $Index.$pul .$yol."$^" .$keraklide.$mik .$db->GetXAmmakartalar($lk); }
                 else
                 {
-                    data = MainData.Index + MainData.pul + MainData.yol + "$^" + MainData.keraklide + "&" + MainData.mik  + XammaKartalar[lk];
+                    $data = $Index.$pul .$yol."$^" .$keraklide. "&".$mik .$db->GetXAmmakartalar($lk);
                 }
 
-                if (YurishKimmiki[lk] == "") { YurishKimmiki[lk] = "0"; }
-                Broadcast(data + huy[lk] + YurishKimmiki[lk].Substring(0, 1) + lk.ToString().PadLeft(4, '0'), grop2[lk],lk);
+                if ($yurishkimmiki == "") { $yurishkimmiki = "0"; }
 
-                if (MainData.Pas)
+                $db->SEndMEssageToGroup($lk,$uyinchilar,$data.$huy.$Index.str_pad($lk,4,"0"));
+
+                if ($Pas)
                 {
-                    if (huy[lk] == 2 || YurishKimmiki[lk].Length == 3) { hu3[lk] = 0; StartCoroutine(Pas(lk)); }
-                    YurishKimmiki[lk] = YurishKimmiki[lk].Replace(MainData.Index.ToString(), "");
+                    if ($huy == 2 || strlen($yurishkimmiki) == 3) { $db->Sethu3(0,$lk); StartCoroutine(Pas(lk)); }
+                    $yurishkimmiki=str_replace("",(string)$Index,$yurishkimmiki);
+                  $db->SetYurishKimmiki($yurishkimmiki,$lk);
                 }
             }
             else
             {
-                if (MainData.Pas)
+                if ($Pas)
                 {
-                    if (YurishKimmiki[lk].Length < 4)
+                    if (strlen($yurishkimmiki) < 4)
                     {
-                        huy[lk] = YurishKimmiki[lk].Length-1;
+                        $db->SetHuy(strlen($yurishkimmiki)-1,$lk);
                     }
-                        if (MainData.Judgement!="")
+                     /*   if (MainData.Judgement!="")
                         {
                             for (int i = 0; i < BotGrouplar[lk].Count; i++)
                         {
-                            print(BotGrouplar[lk]);
                             OnIncomBot("TakeiT" + YurishKimmiki[lk].Substring(0, 1) +
                             lk.ToString().PadLeft(4, '0') + MainData.Judgement, int.Parse(BotGrouplar[lk][i].IdNumber));
                         }
-                    }
-                    YurishKimmiki[lk]=YurishKimmiki[lk].Replace(MainData.Index.ToString(), "");
-                    if (YurishKimmiki[lk] == "") { YurishKimmiki[lk] = "0"; }
-                    data = MainData.Index + MainData.pul + MainData.yol + "$^" + MainData.keraklide + MainData.mik  + huy[lk]+ "&";
+                    }*/
+                    $yurishkimmiki=str_replace("",(string)$Index,$yurishkimmiki);
+                    $db->SetYurishKimmiki($yurishkimmiki,$lk);
+                    if ($yurishkimmiki == "") { $yurishkimmiki = "0"; }
+                    $data = $Index.$pul .$yol."$^" .$keraklide.$mik .$huy."&";
 
-                    Broadcast(data + YurishKimmiki[lk].Substring(0, 1) + lk.ToString().PadLeft(4, '0'), grop2[lk], lk);
+                    $db->SEndMEssageToGroup($lk,$uyinchilar,$data.$Index.str_pad($lk,4,"0"));
+
                     // qushish mumkin
-                    if (huy[lk] == 2) { hu3[lk] = 0; StartCoroutine(Pas(lk));  }
+                    if ($huy == 2) {$db->Sethu3(0,$lk); StartCoroutine(Pas(lk));  }
                 }
                 else
                 {
-                    data = MainData.Index + MainData.pul + MainData.yol + "$^" + MainData.keraklide + MainData.mik + huy[lk];
-                    if (YurishKimmiki[lk] == "")
-                    {
-                        YurishKimmiki[lk] = "0";
-                    }
-                    Broadcast(data + huy[lk] + YurishKimmiki[lk].Substring(0, 1) + lk.ToString().PadLeft(4, '0'), grop2[lk], lk);
+                    $data = $Index.$pul .$yol."$^" .$keraklide.$mik .$huy;
+
+                    if ($yurishkimmiki == "") { $yurishkimmiki = "0"; }
+                    $db->SEndMEssageToGroup($lk,$uyinchilar,$data.$huy.$Index.str_pad($lk,4,"0"));
                 }
             }
         }
