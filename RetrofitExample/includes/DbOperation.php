@@ -1672,12 +1672,12 @@ class DbOperation
                 {
                     $kmn = $kmn .substr($db->GetJavoblade($lk,"Javoblade".substr($Golib2[$i],0,1)),0,19).str_pad(((int)substr($Golib2[$i],1,strlen($Golib2[$i])-1))/2 ,12,"0");
 
-                    $jk = Javoblade[lk, int.Parse(Golib2[i].Substring(0, 1))].Substring(3, 4);
-                    for (int t = 0; t < kmn.Length; t++)
+                    $jk = substr($db->GetJavoblade($lk,"Javoblade".substr($Golib2[$i],0,1)),3,4)
+                    for ($t = 0; $t < strlen($kmn); $t++)
                     {
-                        if (kmn.Length>t+7 && kmn.Substring(t + 3, 4) == jk)
+                        if (strlen($kmn)>$t+7 && substr($kmn,$t+3,4) == $jk)
                         {
-                            if(long.Parse(kmn.Substring(t + 19, 12)) > long.Parse(Golib2[i].Substring(1, Golib2[i].Length - 1)))
+                            if((int)(substr($kmn,$t+19,12)) > (int)substr($Golib2[$i],1,strlen($Golib2[$i])-1))
                             {
                                 kmn = kmn.Substring(0,t) + kmn.Substring(t, 19) + (long.Parse(kmn.Substring(t + 19, 12)) - long.Parse(Golib2[i].Substring(1, Golib2[i].Length - 1)) / 2).ToString().PadLeft(12,'0') + kmn.Substring(t + 31, kmn.Length - t - 31);
                             }
@@ -1685,12 +1685,12 @@ class DbOperation
                             {
                                 kmn = kmn.Substring(0, t) + kmn.Substring(t, 19) + (-long.Parse(kmn.Substring(t + 19, 12))/2 + long.Parse(Golib2[i].Substring(1, Golib2[i].Length - 1))).ToString().PadLeft(12, '0') + kmn.Substring(t + 31, kmn.Length - t - 31);
                             }
-                            t = 1000;
+                            $t = 1000;
                         }
                     }
                 }
             }
-            for (int i = 0; i < 10; i++)
+            for ($i = 0; $i < 10; $i++)
             {
                 if (Golib3[i] != null)
                 {
@@ -1811,12 +1811,12 @@ class DbOperation
                                             {
                                                 if (a1 != 0)
                                                 {
-                                                    kmn = kmn.Substring(0, 19 + t) + (a1 - a3 + a3 / 3).ToString().PadLeft(12, '0') + kmn.Substring(t + 31, kmn.Length - t - 31);
-                                                    a1 = 0;
+                                                    $kmn = kmn.Substring(0, 19 + t) + (a1 - a3 + a3 / 3).ToString().PadLeft(12, '0') + kmn.Substring(t + 31, kmn.Length - t - 31);
+                                                    $a1 = 0;
                                                 }
                                             }
                                         }
-                                        t = t + 31;
+                                        $t = $t + 31;
                                     }
                                 }
                             }
@@ -1830,9 +1830,14 @@ class DbOperation
             {
                 if (strlen($kmn) > $i + 2 &&substr($kmn,$i,2) == "RR")
                 {
-                    OxirgiZapisplar[lk, int.Parse(kmn.Substring(i + 2, 1))] = OxirgiZapisplar[lk, int.Parse(kmn.Substring(i + 2, 1))].Substring(0, 14) +
-                (int.Parse(OxirgiZapisplar[lk, int.Parse(kmn.Substring(i + 2, 1))].Substring(14, 12)) + int.Parse(kmn.Substring(19 + i, 12))).ToString().PadLeft(12, '0') +
-                OxirgiZapisplar[lk, int.Parse(kmn.Substring(i + 2, 1))].Substring(26, OxirgiZapisplar[lk, int.Parse(kmn.Substring(i + 2, 1))].Length - 26);
+                    $db->SetOxirgiZapislar(
+                        substr(substr($db->GetOxirgiZapisplar($lk,"OxirgiZapis".substr($kmn,$i+1,1)),0,14),0,14)
+                        .str_pad((string)((int)substr($db->GetOxirgiZapisplar($lk,"OxirgiZapis".substr($kmn,$i+1,1)),14,12)+(int)substr($kmn,19+$i,12)),12,"0")
+                        .substr(26,strlen($db->GetOxirgiZapisplar($lk,"OxirgiZapis".substr($kmn,$i+1,1)))-26)
+                        ,$lk,
+                        "OxirgiZapis".substr($kmn,$i+1,1),
+                        substr($kmn,$i+1,1)
+                    );
                  $i = $i + 30;
                 }
             }
