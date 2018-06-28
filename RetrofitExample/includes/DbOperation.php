@@ -211,9 +211,11 @@ class DbOperation
     {
         $BotOrClient = "true";
         $Id = "";  $Money = 0;$ki=0;
+        $ImageNumber=12;
         if (strlen($data) > 2 && substr($data,0, 3) == "%??" && strlen($data) >= 35)
         {
             $Id = substr($data,3, 10);
+            $ki=(int)$Id;
             $Money = substr($data,21, 12);
             $ImageNumber = substr($data,33, 2);
             if (strlen($data)>40&&substr($data,35, 1) == "f")
@@ -226,12 +228,13 @@ class DbOperation
         {
             if ($BotOrClient!= "false")
             {
-                $stmt2=$this->con->prepare("SELECT id FROM users WHERE nmadr=?");
-                $stmt2->bind_param("i",$ki);
+                $stmt2=$this->con->prepare("SELECT COUNT(id)FROM players");
+                //     $stmt2->bind_param("i",$ki);
                 $stmt2->execute();
-                $stmt2->store_result();
+                $stmt2->bind_result($ki);
+                $stmt2->fetch();
                 $ki=$ki+1;
-                $stmt =$this->con->prepare("INSERT INTO users (id,Imagenumber,money) VALUES(?,?,?)");
+                $stmt =$this->con->prepare("INSERT INTO players (id,Imagenumber,money) VALUES(?,?,?)");
                 $stmt->bind_param("isi",$ki,$ImageNumber,$Money);
                 $stmt->execute();
             }
@@ -842,7 +845,7 @@ class DbOperation
                 //   yield return new WaitForSeconds(2);
                 // NechtasiBorliginiAniqlash( lk);
                 //  ChiqqanBusaChiqaribYuborish( lk);
-              //  $trt = -1;
+                //  $trt = -1;
                 /*
               for ($i = 0; $i < ChiqaribYuborish.Count; $i++)
               {
@@ -1060,7 +1063,7 @@ class DbOperation
             }
             $minStavka = TurnLk($GroupNumber);
             $gruppdagaiOdamlariSoni=0;
-            for ($i = 0; $i < $db->Tekshir($GroupNumber); $i++)
+            for ($i = 1; $i < 10; $i++)
             {    $yu="OxirgiZapis".(string)$i;
                 if ((int)substr($db->GetOxirgiZapisplar($GroupNumber,$yu),14, 12) >= $minStavka)
                 {
@@ -1242,7 +1245,7 @@ class DbOperation
         }
         return $messages;
     }
-    //
+    //Davom etishi uyinni
     function UyinniDAvomEttir($data){
         function YurishAsosiy($lk, $minSatck,$soni){
             $koo=$lk;
@@ -1453,9 +1456,6 @@ class DbOperation
             //100,200,300,400,500
             $Massiv2=array();
             $Massiv=array();
-
-
-
             for ($i = 1; $i < 10; $i++)
             {
                 if ($db->GetJavoblade($lk,"Javoblade".(string)$i)=="")
@@ -1500,148 +1500,145 @@ class DbOperation
                         //print(i + " " + asosiy + " d=" + Javoblade[lk, int.Parse(asosiy.Substring(i, 1))]);
                         //113579RR3p121di22he2121020
                         $toshde = (int)(substr($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)),2,1));
-                    if (strlen($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1))) > 20)
-                    {
-                        $ObshiyPul = substr($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)),19,strlen($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)))-19);
-                    }
-                 //   print(i + toshde);
-                    $b[(int)substr($asosiy,$i,1)] =
-                        substr($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)),3,2);
-
-                    $b1[(int)substr($asosiy,$i,1)] = substr($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)),5,2);
-                  //  print(" b=" + b[int.Parse(asosiy.Substring(i, 1))]);
-                  //  print(" b1=" + b1[int.Parse(asosiy.Substring(i, 1))]);
-                    for ($x = 0; $x < 7; $x++)
-                    {
-                        if ($d[$x] == $b[(int)substr($asosiy,$i,1)])
+                        if (strlen($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1))) > 20)
                         {
-                            if ($x > $t) { $t = $x; $t1 = substr($asosiy,$i,1); break; }
-                            if ($x == $t) { $t1 = $t1 + (int)(substr($asosiy,$i,1)); }
-                            if (strlen($t1) > 1)
+                            $ObshiyPul = substr($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)),19,strlen($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)))-19);
+                        }
+                        //   print(i + toshde);
+                        $b[(int)substr($asosiy,$i,1)] =
+                            substr($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)),3,2);
+                        $b1[(int)substr($asosiy,$i,1)] = substr($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)),5,2);
+                        //  print(" b=" + b[int.Parse(asosiy.Substring(i, 1))]);
+                        //  print(" b1=" + b1[int.Parse(asosiy.Substring(i, 1))]);
+                        for ($x = 0; $x < 7; $x++)
+                        {
+                            if ($d[$x] == $b[(int)substr($asosiy,$i,1)])
                             {
-                                $k1 = 0; $k2 = "";
-                                for ($k = 0; $k < strlen($t1); $k++)
+                                if ($x > $t) { $t = $x; $t1 = substr($asosiy,$i,1); break; }
+                                if ($x == $t) { $t1 = $t1 + (int)(substr($asosiy,$i,1)); }
+                                if (strlen($t1) > 1)
                                 {
-                                    if ((int)($b1[(int)(substr($t1,$k,1))]) > $k1) { $k2 = substr($t1,$k,1); $k1 = (int)($b1[(int)(substr($t1,$k,1))]); }
-                                    else
+                                    $k1 = 0; $k2 = "";
+                                    for ($k = 0; $k < strlen($t1); $k++)
                                     {
-                                        if ((int)($b1[(int)(substr($t1,$k,1))]) == $k1) { $k2 = $k2.substr($t1,$k,1); }
+                                        if ((int)($b1[(int)(substr($t1,$k,1))]) > $k1) { $k2 = substr($t1,$k,1); $k1 = (int)($b1[(int)(substr($t1,$k,1))]); }
+                                        else
+                                        {
+                                            if ((int)($b1[(int)(substr($t1,$k,1))]) == $k1) { $k2 = $k2.substr($t1,$k,1); }
+                                        }
                                     }
+                                    $t1 = $k2;
                                 }
-                                $t1 = $k2;
                             }
                         }
                     }
-                }
                     // print("1:" + t1);
                     $kmn = $kmn.$t1.":";
                     for ($i = 0; $i < strlen($t1); $i++)
-                {
-                    $asosiy = str_replace(substr($t1,$i,1),"",$asosiy);
-                }
-            }
-                $Pullar = array();
-            $g = array();
-            for ($i=0;$i<10;$i++)
-            {
-                $Pullar[$i] = "0";
-                $g[$i] = "";
-            }
-            $doctor = (int)($ObshiyPul);
-                sort($Massiv2);
-            for($i = 0; $i < sizeof($Massiv2); $i++)
-            {
-                //  print("MAssiv2 =" + Massiv2[i]);
-                for($ml = 0; $ml < 10; $ml++)
-                {
-                    if ($ml==0) { $doctor = (int)($ObshiyPul); }
-                    if ($Pullar[$ml]!="0" && $Pullar[$ml] != $ObshiyPul)
                     {
-                        //       print("d=" + doctor + " Pul=" + Pullar[ml]);
-                        $doctor = $doctor - (int)($Pullar[$ml]);
+                        $asosiy = str_replace(substr($t1,$i,1),"",$asosiy);
                     }
                 }
-                for($t = $i; $t < sizeof($Massiv2); $t++)
+                $Pullar = array();
+                $g = array();
+                for ($i=0;$i<10;$i++)
                 {
-                    if ($Massiv2[$i]<=$Massiv2[$t] && $Massiv2[$t]!=0 && $Massiv2[$i] != 0)
+                    $Pullar[$i] = "0";
+                    $g[$i] = "";
+                }
+                $doctor = (int)($ObshiyPul);
+                sort($Massiv2);
+                for($i = 0; $i < sizeof($Massiv2); $i++)
+                {
+                    //  print("MAssiv2 =" + Massiv2[i]);
+                    for($ml = 0; $ml < 10; $ml++)
                     {
-                        $doctor = $doctor - $Massiv2[$t] + $Massiv2[$i];
-                  //      print("Massiv t=" + Massiv2[t] + " Massiv i=" + Massiv2[i]+" Doctor="+doctor);
-                        for($h = 1; $h < 10; $h++)
+                        if ($ml==0) { $doctor = (int)($ObshiyPul); }
+                        if ($Pullar[$ml]!="0" && $Pullar[$ml] != $ObshiyPul)
                         {
-                            if( strpos($g[$i],(string)$h)===false && $Massiv2[$t] <= $Massiv[$h])
+                            //       print("d=" + doctor + " Pul=" + Pullar[ml]);
+                            $doctor = $doctor - (int)($Pullar[$ml]);
+                        }
+                    }
+                    for($t = $i; $t < sizeof($Massiv2); $t++)
+                    {
+                        if ($Massiv2[$i]<=$Massiv2[$t] && $Massiv2[$t]!=0 && $Massiv2[$i] != 0)
+                        {
+                            $doctor = $doctor - $Massiv2[$t] + $Massiv2[$i];
+                            //      print("Massiv t=" + Massiv2[t] + " Massiv i=" + Massiv2[i]+" Doctor="+doctor);
+                            for($h = 1; $h < 10; $h++)
                             {
-                                $g[$i] = $g[$i].$h;
+                                if( strpos($g[$i],(string)$h)===false && $Massiv2[$t] <= $Massiv[$h])
+                                {
+                                    $g[$i] = $g[$i].$h;
+                                }
                             }
                         }
                     }
+                    $Pullar[$i] = (string)$doctor;
                 }
-                $Pullar[$i] = (string)$doctor;
-            }
                 $sdasd="";
-            $Golib =array();$dfg = 0;
-           $Golib2 = array(); $dfg2 = 0;
-            $Golib3 = array(); $dfg3 = 0;
-            for ($i = 0; $i < sizeof($Pullar); $i++)
-            {
-                if ($Pullar[$i] != "0" && $g[$i]!=""&&$sdasd!= $Pullar[$i].$g[$i])
+                $Golib =array();$dfg = 0;
+                $Golib2 = array(); $dfg2 = 0;
+                $Golib3 = array(); $dfg3 = 0;
+                for ($i = 0; $i < sizeof($Pullar); $i++)
                 {
-                    $sdasd = $Pullar[$i]. $g[$i];
-
-                    for($t = 0; $t <sizeof($kmn) ; $t++)
-                    {//kmn= 12:3:7:4:6:59:8:
-                        for ($t2 = 0; $t2 <sizeof($g[$i]); $t2++)
-                        {//123456789
-                            if (substr($kmn,$t,1)!=":" && substr($kmn,$t,1) == substr($g[$i],$t,1))
-                            {
-                                $Golib[$dfg] = substr($kmn,$t,1).$Pullar[$i];
-                                if(strlen($kmn) > $t + 1)
+                    if ($Pullar[$i] != "0" && $g[$i]!=""&&$sdasd!= $Pullar[$i].$g[$i])
+                    {
+                        $sdasd = $Pullar[$i]. $g[$i];
+                        for($t = 0; $t <sizeof($kmn) ; $t++)
+                        {//kmn= 12:3:7:4:6:59:8:
+                            for ($t2 = 0; $t2 <sizeof($g[$i]); $t2++)
+                            {//123456789
+                                if (substr($kmn,$t,1)!=":" && substr($kmn,$t,1) == substr($g[$i],$t,1))
                                 {
-                                    if (substr($kmn,$t+1,1) != ":")
+                                    $Golib[$dfg] = substr($kmn,$t,1).$Pullar[$i];
+                                    if(strlen($kmn) > $t + 1)
                                     {
-                                        // dfg2 = 0;Pullar dfg ga bogliq
-                                        for ($t3 = 0; $t3< sizeof($g[$i]); $t3++)
+                                        if (substr($kmn,$t+1,1) != ":")
                                         {
-                                            if (substr($kmn,$t+1,1) == substr($g[$i],$t3,1))
+                                            // dfg2 = 0;Pullar dfg ga bogliq
+                                            for ($t3 = 0; $t3< sizeof($g[$i]); $t3++)
                                             {
-                                                //   print(dfg2);
-                                                $Golib2[$dfg2] = substr($kmn,$t+1,1).$Pullar[$i];
-                                                if (sizeof($kmn) > $t+2)
+                                                if (substr($kmn,$t+1,1) == substr($g[$i],$t3,1))
                                                 {
-                                                    if (substr($kmn,$t+2,1) != ":")
+                                                    //   print(dfg2);
+                                                    $Golib2[$dfg2] = substr($kmn,$t+1,1).$Pullar[$i];
+                                                    if (sizeof($kmn) > $t+2)
                                                     {
-                                                        //    dfg3 = 0;
-                                                        for ($t4 = 0; $t4 < sizeof($g[$i]); $t4++)
+                                                        if (substr($kmn,$t+2,1) != ":")
                                                         {
-                                                            if (substr($kmn,$t+2,1) == substr($g[$i],$t4,1))
+                                                            //    dfg3 = 0;
+                                                            for ($t4 = 0; $t4 < sizeof($g[$i]); $t4++)
                                                             {
-                                                                $Golib3[$dfg3] = substr($kmn,$t+2,1) . $Pullar[$i];
-                                                                $t = 100; $t2 = 100; $t3 = 10; $t4 = 100;
+                                                                if (substr($kmn,$t+2,1) == substr($g[$i],$t4,1))
+                                                                {
+                                                                    $Golib3[$dfg3] = substr($kmn,$t+2,1) . $Pullar[$i];
+                                                                    $t = 100; $t2 = 100; $t3 = 10; $t4 = 100;
+                                                                }
                                                             }
                                                         }
                                                     }
+                                                    $t = 100; $t2 = 100;$t3 = 100;
                                                 }
-                                                $t = 100; $t2 = 100;$t3 = 100;
                                             }
                                         }
                                     }
+                                    $t = 100;$t2 = 100;
                                 }
-                                $t = 100;$t2 = 100;
                             }
                         }
+                        $dfg++; $dfg2++; $dfg3++;
                     }
-                    $dfg++; $dfg2++; $dfg3++;
                 }
-            }
-
-    /*  */        for ($i = 0; $i < 10; $i++)
+                /*  */        for ($i = 0; $i < 10; $i++)
             {
                 for ($t = 0; $t < 10; $t++)
                 {
                     if($Golib[$t]!=null && $Golib[$i] != null && substr($Golib[$i],0,1)==substr($Golib[$t],0,1) && $t!=$i)
                     {
                         $Golib[$i] =  substr($Golib[$i],0,1) .(string)((int)(substr($Golib[$i],1,strlen($Golib[$i])-1))+
-                    (int)(substr($Golib[$t],1,strlen($Golib[$t])-1)));
+                                (int)(substr($Golib[$t],1,strlen($Golib[$t])-1)));
                         $Golib[$t] = null;
                     }
                     if($Golib2[$t]!=null && $Golib2[$i] != null && substr($Golib2[$i],0,1)==substr($Golib2[$t],0,1) && $t!=$i)
@@ -1658,160 +1655,121 @@ class DbOperation
                     }
                 }
             }
-            $kmn = "";
-            for ($i = 0; $i < 10; $i++)
-            {
-                if ($Golib[$i] != null)
+                $kmn = "";
+                for ($i = 0; $i < 10; $i++)
                 {
-                    $kmn = $kmn .substr($db->GetJavoblade($lk,"Javoblade".substr($Golib[$i],0,1)),0,19).str_pad(substr($Golib[$i],1,strlen($Golib[$i])-1) ,12,"0");
-                }
-            }
-            for ($i = 0; $i < 10; $i++)
-            {
-                if ($Golib2[$i] != null)
-                {
-                    $kmn = $kmn .substr($db->GetJavoblade($lk,"Javoblade".substr($Golib2[$i],0,1)),0,19).str_pad(((int)substr($Golib2[$i],1,strlen($Golib2[$i])-1))/2 ,12,"0");
-
-                    $jk = substr($db->GetJavoblade($lk,"Javoblade".substr($Golib2[$i],0,1)),3,4)
-                    for ($t = 0; $t < strlen($kmn); $t++)
+                    if ($Golib[$i] != null)
                     {
-                        if (strlen($kmn)>$t+7 && substr($kmn,$t+3,4) == $jk)
-                        {
-                            if((int)(substr($kmn,$t+19,12)) > (int)substr($Golib2[$i],1,strlen($Golib2[$i])-1))
-                            {
-                                kmn = kmn.Substring(0,t) + kmn.Substring(t, 19) + (long.Parse(kmn.Substring(t + 19, 12)) - long.Parse(Golib2[i].Substring(1, Golib2[i].Length - 1)) / 2).ToString().PadLeft(12,'0') + kmn.Substring(t + 31, kmn.Length - t - 31);
-                            }
-                            else
-                            {
-                                kmn = kmn.Substring(0, t) + kmn.Substring(t, 19) + (-long.Parse(kmn.Substring(t + 19, 12))/2 + long.Parse(Golib2[i].Substring(1, Golib2[i].Length - 1))).ToString().PadLeft(12, '0') + kmn.Substring(t + 31, kmn.Length - t - 31);
-                            }
-                            $t = 1000;
-                        }
+                        $kmn = $kmn .substr($db->GetJavoblade($lk,"Javoblade".substr($Golib[$i],0,1)),0,19).str_pad(substr($Golib[$i],1,strlen($Golib[$i])-1) ,12,"0");
                     }
                 }
-            }
-            for ($i = 0; $i < 10; $i++)
-            {
-                if (Golib3[i] != null)
+                for ($i = 0; $i < 10; $i++)
                 {
-                    print(Golib3[i]);
-                    string jk = Javoblade[lk, int.Parse(Golib3[i].Substring(0, 1))].Substring(3, 4);
-                    long a1 =0, a2=0, a3=0;
-                    for (int t = 0; t < kmn.Length; t++)
+                    if ($Golib2[$i] != null)
                     {
-                        if (kmn.Length > t + 10 && kmn.Substring(t + 3, 4) == jk)
+                        $kmn = $kmn .substr($db->GetJavoblade($lk,"Javoblade".substr($Golib2[$i],0,1)),0,19).str_pad(((int)substr($Golib2[$i],1,strlen($Golib2[$i])-1))/2 ,12,"0");
+                        $jk = substr($db->GetJavoblade($lk,"Javoblade".substr($Golib2[$i],0,1)),3,4);
+                        for ($t = 0; $t < strlen($kmn); $t++)
                         {
-                            print(a2);
-                            if (a2 == 0)
+                            if (strlen($kmn)>$t+7 && substr($kmn,$t+3,4) == $jk)
                             {
-                                a2= long.Parse(kmn.Substring(t + 19, 12));
-                            }
-                            else
-                            {
-                                if (a3 == 0)
+                                if((int)(substr($kmn,$t+19,12)) > (int)substr($Golib2[$i],1,strlen($Golib2[$i])-1))
                                 {
-                                    a3 = long.Parse(kmn.Substring(t + 19, 12));
-                                }
-                            }
-                            t = t + 30;
-                        }
-                    }
-                    a1 = int.Parse(Golib3[i].Substring(1, Golib3[i].Length - 1));
-                    if (a2 > a3)
-                    {
-                        a2 = a2 + a3;
-                        a3 = a3 * 2;
-                    }
-                    else
-                    {
-                        a3 = a3 + a2;
-                        a2 = a2 * 2;
-                    }
-                    print(a1 +" -"+ a2 + " -" + a3);
-                    if(a1 <= a2 && a3 >= a1)
-                    {
-                        kmn = kmn + Javoblade[lk, int.Parse(Golib3[i].Substring(0, 1))].Substring(0, 19) +
-                    (long.Parse(Golib3[i].Substring(1, Golib3[i].Length - 1)) / 3).ToString().PadLeft(12, '0');
-                        for (int t = 0; t < kmn.Length; t++)
-                        {
-                            if (kmn.Length > t + 10 && kmn.Substring(t + 3, 4) == jk)
-                            {
-                                if (a2 != 0)
-                                {
-                                    kmn = kmn.Substring(0, 19+t) + (a2 - a1 + a1 / 3).ToString().PadLeft(12, '0') + kmn.Substring(t + 31, kmn.Length - t - 31);
-                                    a2 = 0;
+                                    $kmn = substr($kmn,0,$t).substr($kmn,$t,19).str_pad((string)(((int)(substr($kmn,$t+19,12))-(int)substr($Golib2[$i],1,strlen($Golib2[$i])-1))/2),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
                                 }
                                 else
                                 {
-                                    if (a3 != 0)
-                                    {
-                                        kmn = kmn.Substring(0, 19 + t) + (a3 - a1 + a1 / 3).ToString().PadLeft(12, '0') + kmn.Substring(t + 31, kmn.Length - t - 31);
-                                        a3 = 0;
-                                    }
+                                    $kmn = substr($kmn,0,$t).substr($kmn,$t,19).str_pad((string)(-((int)(substr($kmn,$t+19,12)))/2+(int)substr($Golib2[$i],1,strlen($Golib2[$i])-1)),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
                                 }
-                                print(t+" "+kmn);
-                                t = t + 30;
+                                $t = 1000;
                             }
                         }
                     }
-                    else
+                }
+                for ($i = 0; $i < 10; $i++)
+                {
+                    if ($Golib3[$i] != null)
                     {
-                        if (a2 <= a1 && a3 >= a2)
+                        $jk=substr($db->GetJavoblade($lk,"JAvoblade".substr($Golib3[$i],0,1)),3,4);
+                        $a1 =0; $a2=0; $a3=0;
+                        for ($t = 0; $t < strlen($kmn); $t++)
                         {
-                            for (int t = 0; t < kmn.Length; t++)
+                            if (strlen($kmn) > $t + 10 && substr($kmn,$t+3,4) == $jk)
                             {
-                                if (kmn.Length > t + 10 && kmn.Substring(t + 3, 4) == jk)
+                                if ($a2 == 0)
                                 {
-                                    if (a2 != 0)
+                                    $a2= (int)substr($kmn,$t+19,12) ;
+                                }
+                                else
+                                {
+                                    if ($a3 == 0)
                                     {
-                                        kmn = kmn.Substring(0, 19 + t) + ( a2 / 3).ToString().PadLeft(12, '0') + kmn.Substring(t + 31, kmn.Length - t - 31);
-                                        a2 = 0;
+                                        $a3 = (int)substr($kmn,$t+19,12) ;
+                                    }
+                                }
+                                $t = $t + 30;
+                            }
+                        }
+                        $a1 = (int)(substr($Golib3[$i],1,strlen($Golib3)-1));
+                        if ($a2 > $a3)
+                        {
+                            $a2 = $a2 + $a3;
+                            $a3 = $a3 * 2;
+                        }
+                        else
+                        {
+                            $a3 = $a3 + $a2;
+                            $a2 = $a2 * 2;
+                        }
+                        if($a1 <= $a2 && $a3 >= $a1)
+                        {
+                            $kmn = $kmn.substr($db->GetJavoblade($lk,"Javoblade".substr($Golib3[$i],0,1)),0,19).str_pad((string)(((int)substr($Golib3[$i],1,strlen($Golib3[$i])-1))/3) ,12,"0");
+                            for ($t = 0; $t < strlen($kmn); $t++)
+                            {
+                                if (strlen($kmn) > $t + 10 && substr($kmn,$t+3,4) == $jk)
+                                {
+                                    if ($a2 != 0)
+                                    {
+                                        $kmn=substr($kmn,0,19+$t).str_pad((string)($a2-$a1+$a1/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                        $a2 = 0;
                                     }
                                     else
                                     {
-                                        if (a3 != 0)
+                                        if ($a3 != 0)
                                         {
-                                            kmn = kmn.Substring(0, 19 + t) + (a3 - a2 + a2 / 3).ToString().PadLeft(12, '0') + kmn.Substring(t + 31, kmn.Length - t - 31);
-                                            a3 = 0;
-                                        }
-                                        else
-                                        {
-                                            if (a1 != 0)
-                                            {
-                                                kmn = kmn.Substring(0, 19 + t) + (a1 - a2 + a2 / 3).ToString().PadLeft(12, '0') + kmn.Substring(t + 31, kmn.Length - t - 31);
-                                                a1 = 0;
-                                            }
+                                            $kmn=substr($kmn,0,19+$t).str_pad((string)($a3-$a1+$a1/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                            $a3 = 0;
                                         }
                                     }
-                                    t = t + 31;
+                                    $t = $t + 30;
                                 }
                             }
                         }
                         else
                         {
-                            if (a3 <= a2 && a1 >= a3)
+                            if ($a2 <= $a1 && $a3 >= $a2)
                             {
-                                for (int t = 0; t < kmn.Length; t++)
+                                for ($t = 0; $t < strlen($kmn); $t++)
                                 {
-                                    if (kmn.Length > t + 10 && kmn.Substring(t + 3, 4) == jk)
+                                    if (strlen($kmn)> $t + 10 && substr($kmn,$t+3,4) == $jk)
                                     {
-                                        if (a2 != 0)
+                                        if ($a2 != 0)
                                         {
-                                            kmn = kmn.Substring(0, 19 + t) + (a2-a3 +a3 / 3).ToString().PadLeft(12, '0') + kmn.Substring(t + 31, kmn.Length - t - 31);
-                                            a2 = 0;
+                                            $kmn=substr($kmn,0,19+$t).str_pad((string)($a2/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                            $a2 = 0;
                                         }
                                         else
                                         {
-                                            if (a3 != 0)
+                                            if ($a3 != 0)
                                             {
-                                                kmn = kmn.Substring(0, 19 + t) + (a3 / 3).ToString().PadLeft(12, '0') + kmn.Substring(t + 31, kmn.Length - t - 31);
-                                                a3 = 0;
+                                                $kmn=substr($kmn,0,19+$t).str_pad((string)($a3-$a2+$a2/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                                $a3 = 0;
                                             }
                                             else
                                             {
-                                                if (a1 != 0)
+                                                if ($a1 != 0)
                                                 {
-                                                    $kmn = kmn.Substring(0, 19 + t) + (a1 - a3 + a3 / 3).ToString().PadLeft(12, '0') + kmn.Substring(t + 31, kmn.Length - t - 31);
+                                                    $kmn=substr($kmn,0,19+$t).str_pad((string)($a1-$a2+$a2/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
                                                     $a1 = 0;
                                                 }
                                             }
@@ -1820,13 +1778,45 @@ class DbOperation
                                     }
                                 }
                             }
+                            else
+                            {
+                                if ($a3 <= $a2 && $a1 >= $a3)
+                                {
+                                    for ($t = 0; $t < strlen($kmn); $t++)
+                                    {
+                                        if (strlen($kmn) > $t + 10 && substr($kmn,$t+3,4) == $jk)
+                                        {
+                                            if ($a2 != 0)
+                                            {
+                                                $kmn=substr($kmn,0,19+$t).str_pad((string)($a2-$a3+$a3/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                                $a2 = 0;
+                                            }
+                                            else
+                                            {
+                                                if ($a3 != 0)
+                                                {
+                                                    $kmn=substr($kmn,0,19+$t).str_pad((string)($a3/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                                    $a3 = 0;
+                                                }
+                                                else
+                                                {
+                                                    if ($a1 != 0)
+                                                    {
+                                                        $kmn=substr($kmn,0,19+$t).str_pad((string)($a1-$a3+$a3/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                                        $a1 = 0;
+                                                    }
+                                                }
+                                            }
+                                            $t = $t + 31;
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
-
-                for ($i = 0; $i < strlen($kmn); $i++)
+            for ($i = 0; $i < strlen($kmn); $i++)
             {
                 if (strlen($kmn) > $i + 2 &&substr($kmn,$i,2) == "RR")
                 {
@@ -1838,7 +1828,7 @@ class DbOperation
                         "OxirgiZapis".substr($kmn,$i+1,1),
                         substr($kmn,$i+1,1)
                     );
-                 $i = $i + 30;
+                    $i = $i + 30;
                 }
             }
             //pullarini nol qilish
@@ -1849,11 +1839,10 @@ class DbOperation
                     ."000000000000".substr($db->GetOxirgiZapisplar($lk,"OxirgiZapis".
                         substr($uyinchilar,$i,1)),39,strlen($db->GetOxirgiZapisplar($lk,"OxirgiZapis".
                             substr($uyinchilar,$i,1)))-39),$lk,"OxirgiZapis".substr($uyinchilar,$i,1),substr($uyinchilar,$i,1)
-              );
-          }
-
-        if ($kmn != "") { $db->SEndMEssageToGroup($lk,$uyinchilar,$kmn); }
-           // $db->SetKartatarqatildi("false",$lk);
+                );
+            }
+            if ($kmn != "") { $db->SEndMEssageToGroup($lk,$uyinchilar,$kmn); }
+            // $db->SetKartatarqatildi("false",$lk);
             sleep(6);
             $minSatck = TurnLk($lk);
             $db=new DbOperation();
@@ -1863,7 +1852,7 @@ class DbOperation
         if (strpos($data,"$")!==false && strpos($data,"^")!==false && strlen($data) > 32)
         {
             //%%NameByMe0001000000039990$000000000010000000040000xb00000000011
-            //1000000000980000000000020$^121010
+            //1000000000980000000000020$^100010
             //3000000000980000000000020$^1021010
             $Pas=false;
             $nmaligi = "UyinniDavomEtishi";
@@ -1970,10 +1959,10 @@ class DbOperation
                     // XammaKartalar[lk] = cards[n[0]] + cards[n[1]] + cards[n[2]] + cards[n[3]] + cards[n[4]];
                     //1000000000990000000000010$^200017&
                     if (!$Pas) {
-                        $data = $Index.$pul .$yol."$^" .$keraklide.$mik .$db->GetXAmmakartalar($lk); }
+                        $data = $Index.str_pad($pul,12,"0",STR_PAD_LEFT) .str_pad($yol,12,"0",STR_PAD_LEFT)."$^" .$keraklide.$mik .$db->GetXAmmakartalar($lk); }
                     else
                     {
-                        $data = $Index.$pul .$yol."$^" .$keraklide. "&".$mik .$db->GetXAmmakartalar($lk);
+                        $data = $Index.str_pad($pul,12,"0",STR_PAD_LEFT) .str_pad($yol,12,"0",STR_PAD_LEFT)."$^" .$keraklide. "&".$mik .$db->GetXAmmakartalar($lk);
                     }
                     if ($yurishkimmiki == "") { $yurishkimmiki = "0"; }
                     $db->SEndMEssageToGroup($lk,$uyinchilar,$data.$huy.$Index.str_pad($lk,4,"0"));
@@ -2011,18 +2000,33 @@ class DbOperation
                        }*/
                         $yurishkimmiki=str_replace("",(string)$Index,$yurishkimmiki);
                         $db->SetYurishKimmiki($yurishkimmiki,$lk);
-                        if ($yurishkimmiki == "") { $yurishkimmiki = "0"; }
-                        $data = $Index.$pul .$yol."$^" .$keraklide.$mik .$huy."&";
-                        $db->SEndMEssageToGroup($lk,$uyinchilar,$data.$Index.str_pad($lk,4,"0"));
+                        $data = $Index.str_pad($pul,12,"0",STR_PAD_LEFT) .str_pad($yol,12,"0",STR_PAD_LEFT)."$^" .$keraklide.$mik .$huy."&";
+                        $db->SEndMEssageToGroup($lk,$uyinchilar,$data.$Index.str_pad($lk,4,"0",STR_PAD_LEFT));
                         // qushish mumkin
                         if ($huy == 2) {$db->Sethu3(0,$lk); Pas($lk);  }
                     }
                     else
                     {
-                        $data = $Index.$pul .$yol."$^" .$keraklide.$mik .$huy;
-                        $db->SEndMEssageToGroup($lk,$uyinchilar,$data.$huy.$Index.str_pad($lk,4,"0"));
+                        $data = $Index.str_pad($pul,12,"0",STR_PAD_LEFT) .str_pad($yol,12,"0",STR_PAD_LEFT)."$^" .$keraklide.$mik .$huy;
+                        $db->SEndMEssageToGroup($lk,$uyinchilar,$data.$huy.$Index.str_pad($lk,4,"0",STR_PAD_LEFT));
                     }
                 }
+            }
+        }
+        return "Zo'r";
+    }
+    //Rrnikirishi
+    function RRniKiritish($data){
+        if (strlen($data)>19&&substr($data,0,2)=="RR")
+        {
+            $db=new DbOperation();
+            //RR1at21sp21sp1621020
+            $lk =(int)(substr($data,15,4)) ;
+            $index = (int)(substr($data,2,1));
+            //st,p1,p2,se,fl,sr,fs  RR2p122he12di12
+            if ($db->GetJavoblade($lk,"Javoblade".(string)$index) == "" ||$db->GetJavoblade($lk,"Javoblade".(string)$index) == null)
+            {
+                $db->SetJavoblade("Javoblade".(string)$index,substr($data,0,19).(int)substr($data,19,12),$lk);
             }
         }
         return "Zo'r";
