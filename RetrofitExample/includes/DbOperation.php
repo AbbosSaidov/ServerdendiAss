@@ -2300,7 +2300,6 @@ class DbOperation
                     $i = $i + 30;
                 }
             }
-            //pullarini nol qilish
             //%%NameByMe\Ism\0001\gruppa\00000001000$\pul\000000000000\yul\00000\level\000000001000\pul\xb0000000000\id\
             for ($i = 0; $i < strlen($uyinchilar); $i++)
             {
