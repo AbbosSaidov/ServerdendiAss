@@ -109,6 +109,11 @@ class DbOperation
         $stmt->bind_param("si",$value,$GroupNumber);
         $stmt->execute();
     }
+    function SetError($value,$GroupNumber){
+        $stmt =$this->con->prepare("INSERT INTO error1 (message,groupnumber ) VALUES (?,?)");
+        $stmt->bind_param("si",$value,$GroupNumber);
+        $stmt->execute();
+    }
     function SetKartatarqatildi($value,$GroupNumber){
         $stmt =$this->con->prepare("UPDATE groups SET Kartatarqatildi = ? WHERE NumberOfGroup = ?");
         $stmt->bind_param("si",$value,$GroupNumber);
@@ -179,8 +184,11 @@ class DbOperation
         $stmt =$this->con->prepare("INSERT IGNORE INTO  groups (grop2help,NumberOfGroup,Kartatarqatildi) VALUES(?,?,?)");
         $as="false";
         $stmt->bind_param("sis",$value,$lk,$as);
-        $stmt->execute()
-        ;$stmt =$this->con->prepare("INSERT IGNORE INTO  tikilganpullar (GroupNumber) VALUES(?)");
+        $stmt->execute();
+        $stmt =$this->con->prepare("INSERT IGNORE INTO  tikilganpullar (GroupNumber) VALUES(?)");
+        $stmt->bind_param("i",$lk);
+        $stmt->execute();
+        $stmt =$this->con->prepare("INSERT IGNORE INTO  javoblade (groupnumber) VALUES(?)");
         $stmt->bind_param("i",$lk);
         $stmt->execute();
         $stmt =$this->con->prepare("INSERT IGNORE INTO  oxirgizapis (GroupNumber) VALUES(?)");
@@ -353,7 +361,7 @@ class DbOperation
             }
         }
         function PlayerdaKartaniTarqatish($data,$ass3,$lk,$index,$sonide)
-        { $db=new DbOperation();
+        {
             $ass2 = $ass3;
             $minSatck = TurnLk($lk);
             //Gruppalaga ajratiganda
@@ -993,7 +1001,7 @@ class DbOperation
                             try
                             {
                                 $message=$cards[$n[1][$m * 2]].$cards[$n[1][$m * 2 + 1]].substr($yurishkimmiki,0,1).
-                                    str_pad((string)($minSatck / 2),12,'0')."!". str_pad((string)($minSatck ),12,'0').
+                                    str_pad((string)($minSatck / 2),12,'0',STR_PAD_LEFT)."!". str_pad((string)($minSatck ),12,'0',STR_PAD_LEFT).
                                     $asd .substr($yurishkimmiki,$m+1,1) .$lk;
                                 $db->SEndMEssage($lk,substr($asd,$m,1),$message);
                             }
@@ -1405,17 +1413,10 @@ class DbOperation
                }*/
                         if ($tott2==-1)
                         {
-                            try
-                            {
-                                $message=$cards[$n[1][$m * 2]].$cards[$n[1][$m * 2 + 1]].substr($yurishkimmiki,0,1).
-                                    str_pad((string)($minSatck / 2),12,'0')."!". str_pad((string)($minSatck ),12,'0').
-                                    $asd .substr($yurishkimmiki,$m+1,1) .$lk;
-                                $db->SEndMEssage($lk,substr($asd,$m,1),$message);
-                            }
-                            catch ( ErrorException $e)
-                            {
-                                print("ee uyinchi chiqibketti".$e->getMessage());
-                            }
+                            $message=$cards[$n[1][$m * 2]].$cards[$n[1][$m * 2 + 1]].substr($yurishkimmiki,0,1).
+                                str_pad((string)($minSatck / 2),12,'0',STR_PAD_LEFT)."!". str_pad((string)($minSatck ),12,'0',STR_PAD_LEFT).
+                                $asd .substr($yurishkimmiki,$m+1,1) .$lk;
+                            $db->SEndMEssage($lk,substr($asd,$m,1),$message);
                         }
                         else
                         {
@@ -1443,19 +1444,472 @@ class DbOperation
             $db->SetKartatarqatildi("false",$lk);
             YurishAsosiy($lk,$minSatck,2);
         }
+        function combinatsiya()
+        {
+            $g=array();
+            $n=array();
+            for ($i = 0; $i < 18; $i++)
+            {
+                $g[$i] = rand(11, 63);
+            }
+            for ($iop = 0; $iop < 5; $iop++)
+            {
+                $n[$iop] = rand(11, 63);
+            }
+            try
+            {
+                for ($t1 = 1; $t1 < 18; $t1++)
+                {
+                    if ($t1 == 1)
+                    {
+                        while ($g[1] == $g[0] ||
+                            $g[1] == $g[2] || $g[1] == $g[3] ||
+                            $g[1] == $g[4] || $g[1] == $g[5] ||
+                            $g[1] == $g[6] || $g[1] == $g[7] ||
+                            $g[1] == $g[8] || $g[1] == $g[9] ||
+                            $g[1] == $g[10] || $g[1] == $g[11] ||
+                            $g[1] == $g[12] || $g[1] == $g[13] ||
+                            $g[1] == $g[14] || $g[1] == $g[15] ||
+                            $g[1] == $g[16] || $g[1] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 2)
+                    {
+                        while ($g[2] == $g[0] ||
+                            $g[2] == $g[1] || $g[2] == $g[3] ||
+                            $g[2] == $g[4] || $g[2] == $g[5] ||
+                            $g[2] == $g[6] || $g[2] == $g[7] ||
+                            $g[2] == $g[8] || $g[2] == $g[9] ||
+                            $g[2] == $g[10] || $g[2] == $g[11] ||
+                            $g[2] == $g[12] || $g[2] == $g[13] ||
+                            $g[2] == $g[14] || $g[2] == $g[15] ||
+                            $g[2] == $g[16] || $g[2] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 3)
+                    {
+                        while ($g[3] == $g[0] ||
+                            $g[3] == $g[1] || $g[3] == $g[2] ||
+                            $g[3] == $g[4] || $g[3] == $g[5] ||
+                            $g[3] == $g[6] || $g[3] == $g[7] ||
+                            $g[3] == $g[8] || $g[3] == $g[9] ||
+                            $g[3] == $g[10] || $g[3] == $g[11] ||
+                            $g[3] == $g[12] || $g[3] == $g[13] ||
+                            $g[3] == $g[14] || $g[3] == $g[15] ||
+                            $g[3] == $g[16] || $g[3] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 4)
+                    {
+                        while ($g[4] == $g[0] ||
+                            $g[4] == $g[1] || $g[4] == $g[3] ||
+                            $g[4] == $g[2] || $g[4] == $g[5] ||
+                            $g[4] == $g[6] || $g[4] == $g[7] ||
+                            $g[4] == $g[8] || $g[4] == $g[9] ||
+                            $g[4] == $g[10] || $g[4] == $g[11] ||
+                            $g[4] == $g[12] || $g[4] == $g[13] ||
+                            $g[4] == $g[14] || $g[4] == $g[15] ||
+                            $g[4] == $g[16] || $g[4] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 5)
+                    {
+                        while ($g[5] == $g[0] ||
+                            $g[5] == $g[1] || $g[5] == $g[3] ||
+                            $g[5] == $g[4] || $g[5] == $g[2] ||
+                            $g[5] == $g[6] || $g[5] == $g[7] ||
+                            $g[5] == $g[8] || $g[5] == $g[9] ||
+                            $g[5] == $g[10] || $g[5] == $g[11] ||
+                            $g[5] == $g[12] || $g[5] == $g[13] ||
+                            $g[5] == $g[14] || $g[5] == $g[15] ||
+                            $g[5] == $g[16] || $g[5] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 6)
+                    {
+                        while ($g[6] == $g[0] ||
+                            $g[6] == $g[1] || $g[6] == $g[3] ||
+                            $g[6] == $g[4] || $g[6] == $g[5] ||
+                            $g[6] == $g[2] || $g[6] == $g[7] ||
+                            $g[6] == $g[8] || $g[6] == $g[9] ||
+                            $g[6] == $g[10] || $g[6] == $g[11] ||
+                            $g[6] == $g[12] || $g[6] == $g[13] ||
+                            $g[6] == $g[14] || $g[6] == $g[15] ||
+                            $g[6] == $g[16] || $g[6] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 7)
+                    {
+                        while ($g[7] == $g[0] ||
+                            $g[7] == $g[1] || $g[7] == $g[3] ||
+                            $g[7] == $g[4] || $g[7] == $g[5] ||
+                            $g[7] == $g[6] || $g[7] == $g[2] ||
+                            $g[7] == $g[8] || $g[7] == $g[9] ||
+                            $g[7] == $g[10] || $g[7] == $g[11] ||
+                            $g[7] == $g[12] || $g[7] == $g[13] ||
+                            $g[7] == $g[14] || $g[7] == $g[15] ||
+                            $g[7] == $g[16] || $g[7] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 8)
+                    {
+                        while ($g[8] == $g[0] ||
+                            $g[8] == $g[1] || $g[8] == $g[3] ||
+                            $g[8] == $g[4] || $g[8] == $g[5] ||
+                            $g[8] == $g[6] || $g[8] == $g[2] ||
+                            $g[8] == $g[7] || $g[8] == $g[9] ||
+                            $g[8] == $g[10] ||$g[8] == $g[11] ||
+                            $g[8] == $g[12] || $g[8] == $g[13] ||
+                            $g[8] == $g[14] || $g[8] == $g[15] ||
+                            $g[8] == $g[16] || $g[8] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 9)
+                    {
+                        while ($g[9] == $g[0] ||
+                            $g[9] == $g[1] || $g[9] == $g[3] ||
+                            $g[9] == $g[4] || $g[9] == $g[5] ||
+                            $g[9] == $g[6] || $g[9] == $g[2] ||
+                            $g[9] == $g[8] || $g[9] == $g[7] ||
+                            $g[9] == $g[10] || $g[9] == $g[11] ||
+                            $g[9] == $g[12] || $g[9] == $g[13] ||
+                            $g[9] == $g[14] || $g[9] == $g[15] ||
+                            $g[9] == $g[16] || $g[9] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 10)
+                    {
+                        while ($g[10] == $g[0] ||
+                            $g[10] == $g[1] || $g[10] == $g[3] ||
+                            $g[10] == $g[4] || $g[10] == $g[5] ||
+                            $g[10] == $g[6] || $g[10] == $g[2] ||
+                            $g[10] == $g[8] || $g[10] == $g[7] ||
+                            $g[10] == $g[9] || $g[10] == $g[11] ||
+                            $g[10] == $g[12] || $g[10] == $g[13] ||
+                            $g[10] == $g[14] || $g[10] == $g[15] ||
+                            $g[10] == $g[16] || $g[10] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 11)
+                    {
+                        while ($g[11] == $g[0] ||
+                            $g[11] == $g[1] || $g[11] == $g[3] ||
+                            $g[11] == $g[4] || $g[11] == $g[5] ||
+                            $g[11] == $g[6] || $g[11] == $g[2] ||
+                            $g[11] == $g[8] || $g[11] == $g[7] ||
+                            $g[11] == $g[9] || $g[11] == $g[10] ||
+                            $g[11] == $g[12] || $g[11] == $g[13] ||
+                            $g[11] == $g[14] || $g[11] == $g[15] ||
+                            $g[11] == $g[16] || $g[11] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 12)
+                    {
+                        while ($g[12] == $g[0] ||
+                            $g[12] == $g[1] || $g[12] == $g[3] ||
+                            $g[12] == $g[4] || $g[12] == $g[5] ||
+                            $g[12] == $g[6] || $g[12] == $g[2] ||
+                            $g[12] == $g[8] || $g[12] == $g[7] ||
+                            $g[12] == $g[9] || $g[12] == $g[10] ||
+                            $g[12] == $g[11] || $g[12] == $g[13] ||
+                            $g[12] == $g[14] || $g[12] == $g[15] ||
+                            $g[12] == $g[16] || $g[12] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 13)
+                    {
+                        while ($g[13] == $g[0] ||
+                            $g[13] == $g[1] || $g[13] == $g[3] ||
+                            $g[13] == $g[4] || $g[13] == $g[5] ||
+                            $g[13] == $g[6] || $g[13] == $g[2] ||
+                            $g[13] == $g[8] || $g[13] == $g[7] ||
+                            $g[13] == $g[9] || $g[13] == $g[10] ||
+                            $g[13] == $g[11] || $g[13] == $g[12] ||
+                            $g[13] == $g[14] || $g[13] == $g[15] ||
+                            $g[13] == $g[16] || $g[13] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 14)
+                    {
+                        while ($g[14] == $g[0] ||
+                            $g[14] == $g[1] || $g[14] == $g[3] ||
+                            $g[14] == $g[4] || $g[14] == $g[5] ||
+                            $g[14] == $g[6] || $g[14] == $g[2] ||
+                            $g[14] == $g[8] || $g[14] == $g[7] ||
+                            $g[14] == $g[9] || $g[14] == $g[10] ||
+                            $g[14] == $g[11] || $g[14] == $g[12] ||
+                            $g[14] == $g[13] || $g[14] == $g[15] ||
+                            $g[14] == $g[16] || $g[14] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 15)
+                    {
+                        while ($g[15] == $g[0] ||
+                            $g[15] == $g[1] || $g[15] == $g[3] ||
+                            $g[15] == $g[4] || $g[15] == $g[5] ||
+                            $g[15] == $g[6] || $g[15] == $g[2] ||
+                            $g[15] == $g[8] || $g[15] == $g[7] ||
+                            $g[15] == $g[9] || $g[15] == $g[10] ||
+                            $g[15] == $g[11] || $g[15] == $g[12] ||
+                            $g[15] == $g[13] || $g[15] == $g[14] ||
+                            $g[15] == $g[16] || $g[15] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 16)
+                    {
+                        while ($g[16] == $g[0] ||
+                            $g[16] == $g[1] || $g[16] == $g[3] ||
+                            $g[16] == $g[4] || $g[16] == $g[5] ||
+                            $g[16] == $g[6] || $g[16] == $g[2] ||
+                            $g[16] == $g[8] || $g[16] == $g[7] ||
+                            $g[16] == $g[9] || $g[16] == $g[10] ||
+                            $g[16] == $g[11] || $g[16] == $g[12] ||
+                            $g[16] == $g[13] || $g[16] == $g[15] ||
+                            $g[16] == $g[14] || $g[16] == $g[17])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                    if ($t1 == 17)
+                    {
+                        while ($g[17] == $g[0] ||
+                            $g[17] == $g[1] || $g[17] == $g[3] ||
+                            $g[17] == $g[4] || $g[17] == $g[5] ||
+                            $g[17] == $g[6] || $g[17] == $g[2] ||
+                            $g[17] == $g[8] || $g[17] == $g[7] ||
+                            $g[17] == $g[9] || $g[17] == $g[10] ||
+                            $g[17] == $g[11] || $g[17] == $g[12] ||
+                            $g[17] == $g[13] || $g[17] == $g[15] ||
+                            $g[17] == $g[14] || $g[17] == $g[16])
+                        {
+                            $g[$t1] = rand(11, 63);
+                        }
+                    }
+                }
+                for ($yu = 0; $yu < 5; $yu++)
+                {
+                    if ($yu == 0)
+                    {
+                        while ($n[$yu] == $g[0] || $n[$yu] == $g[7] ||
+                            $n[$yu] == $g[1] || $n[$yu] == $g[3] ||
+                            $n[$yu] == $g[4] || $n[$yu] == $g[5] ||
+                            $n[$yu] == $g[6] || $n[$yu] == $g[2] ||
+                            $n[$yu] == $g[8] || $n[$yu] == $g[9] ||
+                            $n[$yu] == $g[10] || $n[$yu] == $g[11] ||
+                            $n[$yu] == $g[12] || $n[$yu] == $g[13] ||
+                            $n[$yu] == $g[14] || $n[$yu] == $g[15] ||
+                            $n[$yu] == $g[16] || $n[$yu] == $g[17] ||
+                            $n[$yu] == $n[1] || $n[$yu] == $n[2] ||
+                            $n[$yu] == $n[3] || $n[$yu] == $n[4])
+                        {
+                            $n[$yu] = rand(11, 63);
+                        }
+                    }
+                    if ($yu == 1)
+                    {
+                        while ($n[$yu] == $g[0] || $n[$yu] == $g[7] ||
+                            $n[$yu] == $g[1] || $n[$yu] == $g[3] ||
+                            $n[$yu] == $g[4] || $n[$yu] == $g[5] ||
+                            $n[$yu] == $g[6] || $n[$yu] == $g[2] ||
+                            $n[$yu] == $g[8] || $n[$yu] == $g[9] ||
+                            $n[$yu] == $g[10] || $n[$yu] == $g[11] ||
+                            $n[$yu] == $g[12] || $n[$yu] == $g[13] ||
+                            $n[$yu] == $g[14] || $n[$yu] == $g[15] ||
+                            $n[$yu] == $g[16] || $n[$yu] == $g[17] ||
+                            $n[$yu] == $n[0] || $n[$yu] == $n[2] ||
+                            $n[$yu] == $n[3] || $n[$yu] == $n[4])
+                        {
+                            $n[$yu] = rand(11, 63);
+                        }
+                    }
+                    if ($yu == 2)
+                    {
+                        while ($n[$yu] == $g[0] || $n[$yu] == $g[7] ||
+                            $n[$yu] == $g[1] || $n[$yu] == $g[3] ||
+                            $n[$yu] == $g[4] || $n[$yu] == $g[5] ||
+                            $n[$yu] == $g[6] || $n[$yu] == $g[2] ||
+                            $n[$yu] == $g[8] || $n[$yu] == $g[9] ||
+                            $n[$yu] == $g[10] || $n[$yu] == $g[11] ||
+                            $n[$yu] == $g[12] || $n[$yu] == $g[13] ||
+                            $n[$yu] == $g[14] || $n[$yu] == $g[15] ||
+                            $n[$yu] == $g[16] || $n[$yu] == $g[17] ||
+                            $n[$yu] == $n[0] || $n[$yu] == $n[1] ||
+                            $n[$yu] == $n[3] || $n[$yu] == $n[4])
+                        {
+                            $n[$yu] = rand(11, 63);
+                        }
+                    }
+                    if ($yu == 3)
+                    {
+                        while ($n[$yu] == $g[0] || $n[$yu] == $g[7] ||
+                            $n[$yu] == $g[1] || $n[$yu] == $g[3] ||
+                            $n[$yu] == $g[4] || $n[$yu] == $g[5] ||
+                            $n[$yu] == $g[6] || $n[$yu] == $g[2] ||
+                            $n[$yu] == $g[8] || $n[$yu] == $g[9] ||
+                            $n[$yu] == $g[10] || $n[$yu] == $g[11] ||
+                            $n[$yu] == $g[12] || $n[$yu] == $g[13] ||
+                            $n[$yu] == $g[14] || $n[$yu] == $g[15] ||
+                            $n[$yu] == $g[16] || $n[$yu] == $g[17] ||
+                            $n[$yu] == $n[0] || $n[$yu] == $n[2] ||
+                            $n[$yu] == $n[1] || $n[$yu] == $n[4])
+                        {
+                            $n[$yu] = rand(11, 63);
+                        }
+                    }
+                    if ($yu == 4)
+                    {
+                        while ($n[$yu] == $g[0] || $n[$yu] == $g[7] ||
+                            $n[$yu] == $g[1] || $n[$yu] == $g[3] ||
+                            $n[$yu] == $g[4] || $n[$yu] == $g[5] ||
+                            $n[$yu] == $g[6] || $n[$yu] == $g[2] ||
+                            $n[$yu] == $g[8] || $n[$yu] == $g[9] ||
+                            $n[$yu] == $g[10] || $n[$yu] == $g[11] ||
+                            $n[$yu] == $g[12] || $n[$yu] == $g[13] ||
+                            $n[$yu] == $g[14] || $n[$yu] == $g[15] ||
+                            $n[$yu] == $g[16] || $n[$yu] == $g[17] ||
+                            $n[$yu] == $n[0] || $n[$yu] == $n[2] ||
+                            $n[$yu] == $n[1] || $n[$yu] == $n[3])
+                        {
+                            $n[$yu] = rand(11, 63);
+                        }
+                    }
+                }
+                //flesh test
+                //  g[1] = 12; g[0] = 13; n[0] = 14; n[1] = 15; n[2] = 50; n[3] = 56; n[4] = 17;
+                //  g[2] = 12; g[3] = 13;
+                //Strit
+                //    g[2] = 33; g[3] = 35;
+                //n[0] = 18;n[1] = 16;n[2] = 49;n[3] = 45;n[4] = 47;
+                // g[1] = 26; g[0] = 17;
+                //para
+                //  g[2] = 23; g[3] = 36; n[0] =26; n[1] = 17; n[2] = 48; n[3] = 35; n[4] = 51;
+                //   g[0] = 23; g[1] = 36;
+                //g[4] = 23; g[5] = 36;
+                //kikerets;
+                //  g[0] = 11; g[1] = 12; n[0] =31; n[1] = 56; n[2] = 48; n[3] = 35; n[4] = 57;
+                // g[2] = 13; g[3] = 14;
+                //set
+                // g[1] = 32; g[0] = 37; n[0] =25; n[1] = 43; n[2] = 11; n[3] = 24; n[4] = 58;
+                // g[2] = 45; g[3] = 50;
+            }
+            catch (Exception $e)
+            {
+                print($e->getMessage());
+            }
+            $as=array($g,$n);
+            return $as;
+        }
+        function cardio()
+        {
+            $cards=array();
+            for($i = 11; $i < 24; $i++)
+            {
+                $cards[$i] = "cl".$i;
+            }
+            for ($i = 24; $i < 37; $i++)
+            {
+                $cards[$i] = "di".($i-13);
+            }
+            for ($i = 37; $i < 50; $i++)
+            {
+                $cards[$i] = "he".($i - 26);
+            }
+            for ($i = 50; $i < 63; $i++)
+            {
+                $cards[$i] = "sp".($i - 39);
+            }
+            return $cards;
+        }
+        function TurnLk($lk)
+        {
+            $m = 0;
+            //lobbi
+            if ($lk > 0) { $m = 10; }
+            if ($lk > 100) { $m = 50; }
+            if ($lk > 200) { $m = 200; }
+            if ($lk > 300) { $m = 1000; }
+            if ($lk > 400) { $m = 4000; }
+            if ($lk > 500) { $m = 20000; }
+            if ($lk > 600) { $m = 100000; }
+            if ($lk > 700) { $m = 500000; }
+            if ($lk > 800) { $m = 1000000; }
+            if ($lk > 900) { $m = 2000000; }
+            if ($lk > 1000) { $m = 10000000; }
+            if ($lk > 1100) { $m = 200000000; }
+            if ($lk > 1200) { $m = 500000000; }
+            if ($lk > 1300) { $m = 1000000000; }
+            if ($lk > 1400) { $m = 500000; }
+            if ($lk > 1500) { $m = 1000000; }
+            if ($lk > 1600) { $m = 2000000; }
+            if ($lk > 1700) { $m = 10000000; }
+            if ($lk > 1800) { $m = 200000000; }
+            if ($lk > 1900) { $m = 500000000; }
+            if ($lk > 2000) { $m = 1000000000; }
+            //turnir
+            if ($lk > 2100) { $m = 20; }
+            if ($lk > 2200) { $m = 20; }
+            if ($lk > 2300) { $m = 20; }
+            if ($lk > 2400) { $m = 20; }
+            if ($lk > 2500) { $m = 20; }
+            if ($lk > 2600) { $m = 20; }
+            if ($lk > 2700) { $m = 20; }
+            if ($lk > 2800) { $m = 20; }
+            //3roundli
+            if ($lk > 2900) { $m = 20; }
+            if ($lk > 3000) { $m = 20; }
+            if ($lk > 3100) { $m = 20; }
+            return $m;
+        }
         function Javobit($lk){
+
             sleep(3);
             $db=new DbOperation();
+
             $ObshiyPul = "0";
             $uyinchilar=$db->Getuyinchilar($lk);
-            for ($i = 0; $i < $uyinchilar; $i++)
+            for ($i = 0; $i < strlen($uyinchilar); $i++)
             {
-                $ObshiyPul = (string)((int)($ObshiyPul) + (int)($db->GetTikilganPullar($lk,"TikilganPullar".(string)substr($uyinchilar,$i,1))));
+                $ObshiyPul = (string)((int)($ObshiyPul) + (int)($db->GetTikilganPullar($lk,"TikilganPullar".substr($uyinchilar,$i,1))));
+
             }
             $mkds = 0;$asosiy = "";
             //100,200,300,400,500
             $Massiv2=array();
             $Massiv=array();
+            for($i=0;$i<10;$i++){
+                $Massiv2[$i]=0;
+                    $Massiv[$i]=0;
+            }
             for ($i = 1; $i < 10; $i++)
             {
                 if ($db->GetJavoblade($lk,"Javoblade".(string)$i)=="")
@@ -1465,11 +1919,12 @@ class DbOperation
                 else
                 {
                     $asosiy = $asosiy.$i;
-                    for($t = 0; $t < $uyinchilar; $t++)
+                    for($t = 0; $t < strlen($uyinchilar); $t++)
                     {
                         if (substr($uyinchilar,$t,1) == $i)
                         {
-                            $Massiv2[$i] = $db->GetTikilganPullar($lk,"TikilganPullar".(string)$t);
+                            $Massiv2[$i] = $db->GetTikilganPullar($lk,"TikilganPullar".(string)$i);
+
                             $Massiv[$i] = $Massiv2[$i];
                             $t = 10;
                         }
@@ -1482,10 +1937,17 @@ class DbOperation
                 for($i = 1; $i < 10;$i++)
                 {
                     $kmn = $kmn.$db->GetTikilganPullar($lk,"TikilganPullar".(string)$i);
+
                 }
             }
             else
-            {
+            { $javoblade=array();
+                $javoblade[0]="";
+
+                for($l=1;$l<10;$l++){
+                    $javoblade[$l]=$db->GetJavoblade($lk,"Javoblade".(string)$l);
+                }
+
                 $d=array();
                 $d[0] = "st"; $d[1] = "p1"; $d[2] = "p2"; $d[3] = "se";
                 $d[4] = "sr"; $d[5] = "fl"; $d[6] = "fs";
@@ -1499,15 +1961,15 @@ class DbOperation
                     {
                         //print(i + " " + asosiy + " d=" + Javoblade[lk, int.Parse(asosiy.Substring(i, 1))]);
                         //113579RR3p121di22he2121020
-                        $toshde = (int)(substr($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)),2,1));
-                        if (strlen($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1))) > 20)
+                        //     $toshde = (int)(substr($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)),2,1));
+                        if (strlen($javoblade[(int)substr($asosiy,$i,1)]) > 20)
                         {
-                            $ObshiyPul = substr($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)),19,strlen($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)))-19);
+                            $ObshiyPul = substr($javoblade[(int)substr($asosiy,$i,1)],19,strlen($javoblade[(int)substr($asosiy,$i,1)])-19);
                         }
                         //   print(i + toshde);
                         $b[(int)substr($asosiy,$i,1)] =
-                            substr($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)),3,2);
-                        $b1[(int)substr($asosiy,$i,1)] = substr($db->GetJavoblade($lk,"Javoblade".substr($asosiy,$i,1)),5,2);
+                            substr($javoblade[(int)substr($asosiy,$i,1)],3,2);
+                        $b1[(int)substr($asosiy,$i,1)] = substr($javoblade[(int)substr($asosiy,$i,1)],5,2);
                         //  print(" b=" + b[int.Parse(asosiy.Substring(i, 1))]);
                         //  print(" b1=" + b1[int.Parse(asosiy.Substring(i, 1))]);
                         for ($x = 0; $x < 7; $x++)
@@ -1515,16 +1977,16 @@ class DbOperation
                             if ($d[$x] == $b[(int)substr($asosiy,$i,1)])
                             {
                                 if ($x > $t) { $t = $x; $t1 = substr($asosiy,$i,1); break; }
-                                if ($x == $t) { $t1 = $t1 + (int)(substr($asosiy,$i,1)); }
+                                if ($x == $t) { $t1 = $t1.(substr($asosiy,$i,1)); }
                                 if (strlen($t1) > 1)
                                 {
                                     $k1 = 0; $k2 = "";
                                     for ($k = 0; $k < strlen($t1); $k++)
                                     {
-                                        if ((int)($b1[(int)(substr($t1,$k,1))]) > $k1) { $k2 = substr($t1,$k,1); $k1 = (int)($b1[(int)(substr($t1,$k,1))]); }
+                                        if ((int)($b1[(int)substr($asosiy,$i,1)]) > $k1) { $k2 = substr($t1,$k,1); $k1 = (int)($b1[(int)substr($asosiy,$i,1)]); }
                                         else
                                         {
-                                            if ((int)($b1[(int)(substr($t1,$k,1))]) == $k1) { $k2 = $k2.substr($t1,$k,1); }
+                                            if ((int)($b1[$i]) == $k1) { $k2 = $k2.substr($t1,$k,1); }
                                         }
                                     }
                                     $t1 = $k2;
@@ -1532,6 +1994,7 @@ class DbOperation
                             }
                         }
                     }
+
                     // print("1:" + t1);
                     $kmn = $kmn.$t1.":";
                     for ($i = 0; $i < strlen($t1); $i++)
@@ -1581,6 +2044,11 @@ class DbOperation
                 $Golib =array();$dfg = 0;
                 $Golib2 = array(); $dfg2 = 0;
                 $Golib3 = array(); $dfg3 = 0;
+                for($i=0;$i<10;$i++){
+                    $Golib[$i] ="";
+                    $Golib2[$i] = "";
+                    $Golib3[$i] = "";
+                }
                 for ($i = 0; $i < sizeof($Pullar); $i++)
                 {
                     if ($Pullar[$i] != "0" && $g[$i]!=""&&$sdasd!= $Pullar[$i].$g[$i])
@@ -1631,43 +2099,43 @@ class DbOperation
                         $dfg++; $dfg2++; $dfg3++;
                     }
                 }
-                /*  */        for ($i = 0; $i < 10; $i++)
-            {
-                for ($t = 0; $t < 10; $t++)
+                for ($i = 0; $i < 10; $i++)
                 {
-                    if($Golib[$t]!=null && $Golib[$i] != null && substr($Golib[$i],0,1)==substr($Golib[$t],0,1) && $t!=$i)
+                    for ($t = 0; $t < 10; $t++)
                     {
-                        $Golib[$i] =  substr($Golib[$i],0,1) .(string)((int)(substr($Golib[$i],1,strlen($Golib[$i])-1))+
-                                (int)(substr($Golib[$t],1,strlen($Golib[$t])-1)));
-                        $Golib[$t] = null;
-                    }
-                    if($Golib2[$t]!=null && $Golib2[$i] != null && substr($Golib2[$i],0,1)==substr($Golib2[$t],0,1) && $t!=$i)
-                    {
-                        $Golib2[$i] =  substr($Golib2[$i],0,1) .(string)((int)(substr($Golib2[$i],1,strlen($Golib2[$i])-1))+
-                                (int)(substr($Golib2[$t],1,strlen($Golib2[$t])-1)));
-                        $Golib2[$t] = null;
-                    }
-                    if($Golib3[$t]!=null && $Golib3[$i] != null && substr($Golib3[$i],0,1)==substr($Golib3[$t],0,1) && $t!=$i)
-                    {
-                        $Golib3[$i] =  substr($Golib3[$i],0,1) .(string)((int)(substr($Golib3[$i],1,strlen($Golib3[$i])-1))+
-                                (int)(substr($Golib3[$t],1,strlen($Golib3[$t])-1)));
-                        $Golib3[$t] = null;
+                        if($Golib[$t]!=null && $Golib[$i] != null && substr($Golib[$i],0,1)==substr($Golib[$t],0,1) && $t!=$i)
+                        {
+                            $Golib[$i] =  substr($Golib[$i],0,1) .(string)((int)(substr($Golib[$i],1,strlen($Golib[$i])-1))+
+                                    (int)(substr($Golib[$t],1,strlen($Golib[$t])-1)));
+                            $Golib[$t] = null;
+                        }
+                        if($Golib2[$t]!=null && $Golib2[$i] != null && substr($Golib2[$i],0,1)==substr($Golib2[$t],0,1) && $t!=$i)
+                        {
+                            $Golib2[$i] =  substr($Golib2[$i],0,1) .(string)((int)(substr($Golib2[$i],1,strlen($Golib2[$i])-1))+
+                                    (int)(substr($Golib2[$t],1,strlen($Golib2[$t])-1)));
+                            $Golib2[$t] = null;
+                        }
+                        if($Golib3[$t]!=null && $Golib3[$i] != null && substr($Golib3[$i],0,1)==substr($Golib3[$t],0,1) && $t!=$i)
+                        {
+                            $Golib3[$i] =  substr($Golib3[$i],0,1) .(string)((int)(substr($Golib3[$i],1,strlen($Golib3[$i])-1))+
+                                    (int)(substr($Golib3[$t],1,strlen($Golib3[$t])-1)));
+                            $Golib3[$t] = null;
+                        }
                     }
                 }
-            }
                 $kmn = "";
                 for ($i = 0; $i < 10; $i++)
                 {
                     if ($Golib[$i] != null)
                     {
-                        $kmn = $kmn .substr($db->GetJavoblade($lk,"Javoblade".substr($Golib[$i],0,1)),0,19).str_pad(substr($Golib[$i],1,strlen($Golib[$i])-1) ,12,"0");
+                        $kmn = $kmn .substr($db->GetJavoblade($lk,"Javoblade".substr($Golib[$i],0,1)),0,19).str_pad(substr($Golib[$i],1,strlen($Golib[$i])-1) ,12,"0",STR_PAD_LEFT);
                     }
                 }
                 for ($i = 0; $i < 10; $i++)
                 {
                     if ($Golib2[$i] != null)
                     {
-                        $kmn = $kmn .substr($db->GetJavoblade($lk,"Javoblade".substr($Golib2[$i],0,1)),0,19).str_pad(((int)substr($Golib2[$i],1,strlen($Golib2[$i])-1))/2 ,12,"0");
+                        $kmn = $kmn .substr($db->GetJavoblade($lk,"Javoblade".substr($Golib2[$i],0,1)),0,19).str_pad(((int)substr($Golib2[$i],1,strlen($Golib2[$i])-1))/2 ,12,"0",STR_PAD_LEFT);
                         $jk = substr($db->GetJavoblade($lk,"Javoblade".substr($Golib2[$i],0,1)),3,4);
                         for ($t = 0; $t < strlen($kmn); $t++)
                         {
@@ -1675,11 +2143,11 @@ class DbOperation
                             {
                                 if((int)(substr($kmn,$t+19,12)) > (int)substr($Golib2[$i],1,strlen($Golib2[$i])-1))
                                 {
-                                    $kmn = substr($kmn,0,$t).substr($kmn,$t,19).str_pad((string)(((int)(substr($kmn,$t+19,12))-(int)substr($Golib2[$i],1,strlen($Golib2[$i])-1))/2),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                    $kmn = substr($kmn,0,$t).substr($kmn,$t,19).str_pad((string)(((int)(substr($kmn,$t+19,12))-(int)substr($Golib2[$i],1,strlen($Golib2[$i])-1))/2),12,"0",STR_PAD_LEFT).substr($kmn,$t+31,strlen($kmn)-$t-31);
                                 }
                                 else
                                 {
-                                    $kmn = substr($kmn,0,$t).substr($kmn,$t,19).str_pad((string)(-((int)(substr($kmn,$t+19,12)))/2+(int)substr($Golib2[$i],1,strlen($Golib2[$i])-1)),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                    $kmn = substr($kmn,0,$t).substr($kmn,$t,19).str_pad((string)(-((int)(substr($kmn,$t+19,12)))/2+(int)substr($Golib2[$i],1,strlen($Golib2[$i])-1)),12,"0",STR_PAD_LEFT).substr($kmn,$t+31,strlen($kmn)-$t-31);
                                 }
                                 $t = 1000;
                             }
@@ -1723,21 +2191,21 @@ class DbOperation
                         }
                         if($a1 <= $a2 && $a3 >= $a1)
                         {
-                            $kmn = $kmn.substr($db->GetJavoblade($lk,"Javoblade".substr($Golib3[$i],0,1)),0,19).str_pad((string)(((int)substr($Golib3[$i],1,strlen($Golib3[$i])-1))/3) ,12,"0");
+                            $kmn = $kmn.substr($db->GetJavoblade($lk,"Javoblade".substr($Golib3[$i],0,1)),0,19).str_pad((string)(((int)substr($Golib3[$i],1,strlen($Golib3[$i])-1))/3) ,12,"0",STR_PAD_LEFT);
                             for ($t = 0; $t < strlen($kmn); $t++)
                             {
                                 if (strlen($kmn) > $t + 10 && substr($kmn,$t+3,4) == $jk)
                                 {
                                     if ($a2 != 0)
                                     {
-                                        $kmn=substr($kmn,0,19+$t).str_pad((string)($a2-$a1+$a1/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                        $kmn=substr($kmn,0,19+$t).str_pad((string)($a2-$a1+$a1/3),12,"0",STR_PAD_LEFT).substr($kmn,$t+31,strlen($kmn)-$t-31);
                                         $a2 = 0;
                                     }
                                     else
                                     {
                                         if ($a3 != 0)
                                         {
-                                            $kmn=substr($kmn,0,19+$t).str_pad((string)($a3-$a1+$a1/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                            $kmn=substr($kmn,0,19+$t).str_pad((string)($a3-$a1+$a1/3),12,"0",STR_PAD_LEFT).substr($kmn,$t+31,strlen($kmn)-$t-31);
                                             $a3 = 0;
                                         }
                                     }
@@ -1755,21 +2223,21 @@ class DbOperation
                                     {
                                         if ($a2 != 0)
                                         {
-                                            $kmn=substr($kmn,0,19+$t).str_pad((string)($a2/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                            $kmn=substr($kmn,0,19+$t).str_pad((string)($a2/3),12,"0",STR_PAD_LEFT).substr($kmn,$t+31,strlen($kmn)-$t-31);
                                             $a2 = 0;
                                         }
                                         else
                                         {
                                             if ($a3 != 0)
                                             {
-                                                $kmn=substr($kmn,0,19+$t).str_pad((string)($a3-$a2+$a2/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                                $kmn=substr($kmn,0,19+$t).str_pad((string)($a3-$a2+$a2/3),12,"0",STR_PAD_LEFT).substr($kmn,$t+31,strlen($kmn)-$t-31);
                                                 $a3 = 0;
                                             }
                                             else
                                             {
                                                 if ($a1 != 0)
                                                 {
-                                                    $kmn=substr($kmn,0,19+$t).str_pad((string)($a1-$a2+$a2/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                                    $kmn=substr($kmn,0,19+$t).str_pad((string)($a1-$a2+$a2/3),12,"0",STR_PAD_LEFT).substr($kmn,$t+31,strlen($kmn)-$t-31);
                                                     $a1 = 0;
                                                 }
                                             }
@@ -1788,21 +2256,21 @@ class DbOperation
                                         {
                                             if ($a2 != 0)
                                             {
-                                                $kmn=substr($kmn,0,19+$t).str_pad((string)($a2-$a3+$a3/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                                $kmn=substr($kmn,0,19+$t).str_pad((string)($a2-$a3+$a3/3),12,"0",STR_PAD_LEFT).substr($kmn,$t+31,strlen($kmn)-$t-31);
                                                 $a2 = 0;
                                             }
                                             else
                                             {
                                                 if ($a3 != 0)
                                                 {
-                                                    $kmn=substr($kmn,0,19+$t).str_pad((string)($a3/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                                    $kmn=substr($kmn,0,19+$t).str_pad((string)($a3/3),12,"0",STR_PAD_LEFT).substr($kmn,$t+31,strlen($kmn)-$t-31);
                                                     $a3 = 0;
                                                 }
                                                 else
                                                 {
                                                     if ($a1 != 0)
                                                     {
-                                                        $kmn=substr($kmn,0,19+$t).str_pad((string)($a1-$a3+$a3/3),12,"0").substr($kmn,$t+31,strlen($kmn)-$t-31);
+                                                        $kmn=substr($kmn,0,19+$t).str_pad((string)($a1-$a3+$a3/3),12,"0",STR_PAD_LEFT).substr($kmn,$t+31,strlen($kmn)-$t-31);
                                                         $a1 = 0;
                                                     }
                                                 }
@@ -1820,13 +2288,14 @@ class DbOperation
             {
                 if (strlen($kmn) > $i + 2 &&substr($kmn,$i,2) == "RR")
                 {
+                    $db->SetError("Oxirgizapis-".$kmn." ".(int)($i+1),$lk);
                     $db->SetOxirgiZapislar(
-                        substr(substr($db->GetOxirgiZapisplar($lk,"OxirgiZapis".substr($kmn,$i+1,1)),0,14),0,14)
-                        .str_pad((string)((int)substr($db->GetOxirgiZapisplar($lk,"OxirgiZapis".substr($kmn,$i+1,1)),14,12)+(int)substr($kmn,19+$i,12)),12,"0")
-                        .substr(26,strlen($db->GetOxirgiZapisplar($lk,"OxirgiZapis".substr($kmn,$i+1,1)))-26)
+                        substr(substr($db->GetOxirgiZapisplar($lk,"OxirgiZapis".substr($kmn,$i+2,1)),0,14),0,14)
+                        .str_pad((string)((int)substr($db->GetOxirgiZapisplar($lk,"OxirgiZapis".substr($kmn,$i+2,1)),14,12)+(int)substr($kmn,19+$i,12)),12,"0",STR_PAD_LEFT)
+                        .substr(26,strlen($db->GetOxirgiZapisplar($lk,"OxirgiZapis".substr($kmn,$i+2,1)))-26)
                         ,$lk,
-                        "OxirgiZapis".substr($kmn,$i+1,1),
-                        substr($kmn,$i+1,1)
+                        "OxirgiZapis".substr($kmn,$i+2,1),
+                        substr($kmn,$i+2,1)
                     );
                     $i = $i + 30;
                 }
@@ -1854,6 +2323,7 @@ class DbOperation
             //%%NameByMe0001000000039990$000000000010000000040000xb00000000011
             //1000000000980000000000020$^100010
             //3000000000980000000000020$^1021010
+
             $Pas=false;
             $nmaligi = "UyinniDavomEtishi";
             $Index = (int)substr($data,0,1);
@@ -1895,6 +2365,7 @@ class DbOperation
             {
                 $Pas = false;
             }
+            //return " As".$keraklide;
             if ($nmaligi =="UyinniDavomEtishi"&& strlen($yurishkimmiki)>1&&
                 (string)$Index == substr($yurishkimmiki,0,1) &&
                 $kartaTarqatildi=="true")
@@ -1937,10 +2408,10 @@ class DbOperation
                         }
                     }
                 }
-                $db->SetOxirgiZapislar("%%".$Name.str_pad((string)$GroupNumber,4,"0").$pul."$".$yol
-                    .$Level .$Money."xb".$Id,$GroupNumber,"OxirgiZapis".(string)$Index,$Index);
-                $oxirgizapis=  "%%".$Name.str_pad((string)$GroupNumber,4,"0").$pul."$".$yol
-                    .$Level .$Money."xb".$Id.$Index;
+                $db->SetOxirgiZapislar("%%".$Name.str_pad((string)$GroupNumber,4,"0",STR_PAD_LEFT).str_pad((string)$pul,12,"0",STR_PAD_LEFT)."$".
+                    str_pad((string)$yol,12,"0",STR_PAD_LEFT) .$Level .str_pad((string)$Money,12,"0",STR_PAD_LEFT)."xb".$Id,$GroupNumber,"OxirgiZapis".(string)$Index,$Index);
+                $oxirgizapis=  "%%".$Name.str_pad((string)$GroupNumber,4,"0",STR_PAD_LEFT).str_pad((string)$pul,12,"0",STR_PAD_LEFT)."$".  str_pad((string)$yol,12,"0",STR_PAD_LEFT)
+                    .$Level .str_pad((string)$Money,12,"0",STR_PAD_LEFT)."xb".$Id.$Index;
                 if($keraklide == 1)
                 {
                     $db->SetHuy(strlen($yurishkimmiki)-1,$lk);
@@ -1949,9 +2420,10 @@ class DbOperation
                 {
                     for ($i = 0; $i < strlen($yurishkimmiki)-1; $i++)
                     {
-                        $tikilgsnpul="TikilganPullar".(string)$Index;
-                        $OxirgiZapis="OxirgiZapis".(string)$Index;
-                        $db->SetTikilganPullar($tikilgsnpul,(int)$db->GetTikilganPullar($lk,$tikilgsnpul)+(int)substr($db->GetOxirgiZapisplar($lk,$OxirgiZapis),6,12),$lk);
+                        $tikilgsnpul="TikilganPullar".substr($yurishkimmiki,$i+1,1);
+                        $OxirgiZapis="OxirgiZapis".substr($yurishkimmiki,$i+1,1);
+                        $db->SetTikilganPullar($tikilgsnpul,(int)$db->GetTikilganPullar($lk,$tikilgsnpul)+(int)substr($db->GetOxirgiZapisplar($lk,$OxirgiZapis),27,12),$lk);
+
                     }
                     $db->SetHuy(strlen($yurishkimmiki)-1,$lk);
                     $hu3=$db->Gethu3($lk)+1;
@@ -1964,17 +2436,17 @@ class DbOperation
                     {
                         $data = $Index.str_pad($pul,12,"0",STR_PAD_LEFT) .str_pad($yol,12,"0",STR_PAD_LEFT)."$^" .$keraklide. "&".$mik .$db->GetXAmmakartalar($lk);
                     }
-                    if ($yurishkimmiki == "") { $yurishkimmiki = "0"; }
+                    if ($yurishkimmiki == "") {$yurishkimmiki = "0"; }
                     $db->SEndMEssageToGroup($lk,$uyinchilar,$data.$huy.$Index.str_pad($lk,4,"0"));
                     if ($hu3 == 4)
                     {
                         for ($i = 1; $i < 10; $i++)
                         {
                             $javboblede="Javoblade".(string)$i;
-                            $db->SetJavoblade($javboblede,"",$lk);
+                          //  $db->SetJavoblade($javboblede,"",$lk);
                         }
-                        Javobit($lk);
                         $db->Sethu3(0,$lk);
+                        Javobit($lk);
                     }
                     if ($Pas)
                     {  $yurishkimmiki=str_replace("",(string)$Index,$yurishkimmiki);
@@ -2000,14 +2472,14 @@ class DbOperation
                        }*/
                         $yurishkimmiki=str_replace("",(string)$Index,$yurishkimmiki);
                         $db->SetYurishKimmiki($yurishkimmiki,$lk);
-                        $data = $Index.str_pad($pul,12,"0",STR_PAD_LEFT) .str_pad($yol,12,"0",STR_PAD_LEFT)."$^" .$keraklide.$mik .$huy."&";
+                        $data = $Index.str_pad($pul,12,"0",STR_PAD_LEFT).str_pad($yol,12,"0",STR_PAD_LEFT)."$^" .$keraklide.$mik .$huy."&";
                         $db->SEndMEssageToGroup($lk,$uyinchilar,$data.$Index.str_pad($lk,4,"0",STR_PAD_LEFT));
                         // qushish mumkin
                         if ($huy == 2) {$db->Sethu3(0,$lk); Pas($lk);  }
                     }
                     else
                     {
-                        $data = $Index.str_pad($pul,12,"0",STR_PAD_LEFT) .str_pad($yol,12,"0",STR_PAD_LEFT)."$^" .$keraklide.$mik .$huy;
+                        $data = $Index.str_pad($pul,12,"0",STR_PAD_LEFT).str_pad($yol,12,"0",STR_PAD_LEFT)."$^" .$keraklide.$mik .$huy;
                         $db->SEndMEssageToGroup($lk,$uyinchilar,$data.$huy.$Index.str_pad($lk,4,"0",STR_PAD_LEFT));
                     }
                 }
