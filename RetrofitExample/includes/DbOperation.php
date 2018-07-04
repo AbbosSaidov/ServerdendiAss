@@ -2108,7 +2108,7 @@ class DbOperation
                         }
                         $dfg++; $dfg2++; $dfg3++;
                     }
-                }
+                }//sdfsd
                 $rt=";";
                 for($i=0;$i<10;$i++){
                     $rt=$rt." ".$Golib[$i];
