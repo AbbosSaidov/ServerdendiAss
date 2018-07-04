@@ -944,7 +944,7 @@ class DbOperation
                 if ($db->GetHowmanyPlayers($lk) >= $soni && $db->GetKartatarqatildi($lk) == "false")
                 {
                     $db->SetKartatarqatildi("true",$lk);
-                    $db->SetTikilganPullar("Tikilganpullar9","0",$lk);
+                   $db->SetTikilganPullar("Tikilganpullar9","0",$lk);
                     $db->SetTikilganPullar("Tikilganpullar1","0",$lk);
                     $db->SetTikilganPullar("Tikilganpullar2","0",$lk);
                     $db->SetTikilganPullar("Tikilganpullar3","0",$lk);
@@ -2010,6 +2010,7 @@ class DbOperation
                 for($i = 0; $i < sizeof($Massiv2); $i++)
                 {
                     if($Massiv2[$i]!=0){
+
                         for($ml = 0; $ml < 10; $ml++)
                         {
                             if ($ml==0) { $doctor = (int)($ObshiyPul); }
@@ -2037,6 +2038,13 @@ class DbOperation
                         $Pullar[$i] ="0";
                     }
                 }
+                $rt=";";
+                $rt2=";";
+                for($i=0;$i<10;$i++){
+                    $rt=$rt." ".$Pullar[$i];
+                    $rt2=$rt2." ".$g[$i];
+                }
+                $db->SetError("Pullar-".$kmn." ".$rt." ".$rt2,$lk);
 
                 $sdasd="";
                 $Golib =array();   $dfg = 0;
@@ -2057,7 +2065,7 @@ class DbOperation
 
                             for ($t2 = 0; $t2 <sizeof($g[$i]); $t2++)
                             {//4-1 400 4001 4001 4:1: 4 1
-                                $db->SetError("4-".$g[$i]." ".$Pullar[$i]." ".$Pullar[$i].$g[$i]." ".$sdasd." ".$kmn." ".substr($kmn,$t,1)." ".substr($g[$i],$t2,1),$lk);
+
 
                                 if (substr($kmn,$t,1)!=":" && substr($kmn,$t,1) == substr($g[$i],$t2,1))
                                 {
@@ -2318,12 +2326,11 @@ class DbOperation
             }
             $db->SetError("As-".$kmn,$lk);
             if ($kmn != "") { $db->SEndMEssageToGroup($lk,$uyinchilar,$kmn); }
-            // $db->SetKartatarqatildi("false",$lk);
-            sleep(6);
-            $minSatck = TurnLk($lk);
-            $db=new DbOperation();
-            $db->SetKartatarqatildi("false",$lk);
-            YurishAsosiy($lk,$minSatck,2);
+            //sleep(6);
+          //  $minSatck = TurnLk($lk);
+        //    $db=new DbOperation();
+           // $db->SetKartatarqatildi("false",$lk);
+         //   YurishAsosiy($lk,$minSatck,2);
         }
         if (strpos($data,"$")!==false && strpos($data,"^")!==false && strlen($data) > 32)
         {
