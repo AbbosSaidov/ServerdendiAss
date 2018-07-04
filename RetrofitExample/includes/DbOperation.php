@@ -1933,7 +1933,7 @@ class DbOperation
             {
                 for($i = 1; $i < 10;$i++)
                 {
-                    $kmn = $kmn.$db->GetTikilganPullar($lk,"TikilganPullar".(string)$i);
+                    $kmn = $kmn.$db->GetJavoblade($lk,"Javoblade".(string)$i);
                 }
             }
             else
@@ -2009,35 +2009,37 @@ class DbOperation
                 sort($Massiv2);
                 for($i = 0; $i < sizeof($Massiv2); $i++)
                 {
-                    //  print("MAssiv2 =" + Massiv2[i]);
-                    for($ml = 0; $ml < 10; $ml++)
-                    {
-                        if ($ml==0) { $doctor = (int)($ObshiyPul); }
-                        if ($Pullar[$ml]!="0" && $Pullar[$ml] != $ObshiyPul)
+                    if($Massiv2[$i]!=0){
+                        for($ml = 0; $ml < 10; $ml++)
                         {
-                            //       print("d=" + doctor + " Pul=" + Pullar[ml]);
-                            $doctor = $doctor - (int)($Pullar[$ml]);
-                        }
-                    }
-                    for($t = $i; $t < sizeof($Massiv2); $t++)
-                    {
-                        if ($Massiv2[$i]<=$Massiv2[$t] && $Massiv2[$t]!=0 && $Massiv2[$i] != 0)
-                        {
-                            $doctor = $doctor - $Massiv2[$t] + $Massiv2[$i];
-                            //      print("Massiv t=" + Massiv2[t] + " Massiv i=" + Massiv2[i]+" Doctor="+doctor);
-                            for($h = 1; $h < 10; $h++)
+                            if ($ml==0) { $doctor = (int)($ObshiyPul); }
+                            if ($Pullar[$ml]!="0" && $Pullar[$ml] != $ObshiyPul)
                             {
-                                if( strpos($g[$i],(string)$h)===false && $Massiv2[$t] <= $Massiv[$h])
+                                $doctor = $doctor - (int)($Pullar[$ml]);
+                            }
+                        }
+                        for($t = $i; $t < sizeof($Massiv2); $t++)
+                        {
+                            if ($Massiv2[$i]<=$Massiv2[$t] && $Massiv2[$t]!=0 && $Massiv2[$i] != 0)
+                            {
+                                $doctor = $doctor - $Massiv2[$t] + $Massiv2[$i];
+                                for($h = 1; $h < 10; $h++)
                                 {
-                                    $g[$i] = $g[$i].$h;
+                                    if( strpos($g[$i],(string)$h)===false && $Massiv2[$t] <= $Massiv[$h])
+                                    {
+                                        $g[$i] = $g[$i].$h;
+                                    }
                                 }
                             }
                         }
+                        $Pullar[$i] = (string)$doctor;
+                    }else{
+                        $Pullar[$i] ="0";
                     }
-                    $Pullar[$i] = (string)$doctor;
                 }
+
                 $sdasd="";
-                $Golib =array();$dfg = 0;
+                $Golib =array();   $dfg = 0;
                 $Golib2 = array(); $dfg2 = 0;
                 $Golib3 = array(); $dfg3 = 0;
                 for($i=0;$i<10;$i++){
@@ -2052,11 +2054,15 @@ class DbOperation
                         $sdasd = $Pullar[$i]. $g[$i];
                         for($t = 0; $t <sizeof($kmn) ; $t++)
                         {//kmn= 12:3:7:4:6:59:8:
+
                             for ($t2 = 0; $t2 <sizeof($g[$i]); $t2++)
-                            {//123456789
+                            {//4-1 400 4001 4001 4:1: 4 1
+                                $db->SetError("4-".$g[$i]." ".$Pullar[$i]." ".$Pullar[$i].$g[$i]." ".$sdasd." ".$kmn." ".substr($kmn,$t,1)." ".substr($g[$i],$t2,1),$lk);
+
                                 if (substr($kmn,$t,1)!=":" && substr($kmn,$t,1) == substr($g[$i],$t2,1))
                                 {
                                     $Golib[$dfg] = substr($kmn,$t,1).$Pullar[$i];
+
                                     if(strlen($kmn) > $t + 1)
                                     {
                                         if (substr($kmn,$t+1,1) != ":")
@@ -2099,7 +2105,7 @@ class DbOperation
                 for($i=0;$i<10;$i++){
                     $rt=$rt." ".$Golib[$i];
                 }
-                $db->SetError("Bs2-".$kmn." ".$rt,$lk);
+                $db->SetError("Golib-".$kmn." ".$rt,$lk);
                 for ($i = 0; $i < 10; $i++)
                 {
                     for ($t = 0; $t < 10; $t++)
